@@ -18,3 +18,6 @@
 #include "Texture.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "Camera.h"
+#include "Light.h"
+#include "Model.h"

@@ -9,6 +9,16 @@ struct Material
 	sampler2D specularTex;
 };
 
+struct PointLight
+{
+	vec3 position;
+	float intensity;
+	vec3 color;
+	float constant;
+	float linear;
+	float quadratic;
+};
+
 in vec3 vs_position;
 in vec3 vs_color;
 in vec2 vs_texcoord;
@@ -16,11 +26,9 @@ in vec3 vs_normal;
 
 out vec4 fs_color;
 
+//Uniforms
 uniform Material material;
-
-uniform sampler2D texture0;
-uniform sampler2D texture1;
-
+uniform PointLight pointLight;
 uniform vec3 lightPos0;
 uniform vec3 cameraPos;
 
@@ -51,18 +59,34 @@ vec3 calculateSpecular(Material material, vec3 vs_position, vec3 vs_normal, vec3
 	return specularFinal;
 }
 
-void main() {
+void main()
+{
 	//fs_color = vec4(vs_color, 1.f);
-	//fs_color = texture(texture0, vs_texcoord) * texture(texture1, vs_texcoord);
-
-	// Ambient light
-	vec3 ambientLight = calculateAmbient(material);
+	//fs_color = texture(texture0, vs_texcoord) * texture(texture1, vs_texcoord) * vec4(vs_color, 1.f);
+	
+	//Ambient light
+	vec3 ambientFinal = calculateAmbient(material);
 
 	//Diffuse light
-	vec3 diffuseFinal = calculateDiffuse(material, vs_position, vs_normal, lightPos0);
+	vec3 diffuseFinal = calculateDiffuse(material, vs_position, vs_normal, pointLight.position);
 
 	//Specular light
-	vec3 specularFinal = calculateSpecular(material, vs_position, vs_normal, lightPos0, cameraPos);
+	vec3 specularFinal = calculateSpecular(material, vs_position, vs_normal, pointLight.position, cameraPos);
 
-	fs_color = texture(material.specularTex, vs_texcoord) * (vec4(ambientLight, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));
+	//Attenuation
+	float distance = length(pointLight.position - vs_position);
+	//constant linear quadratic
+	float attenuation = pointLight.constant / (1.f + pointLight.linear * distance + pointLight.quadratic * (distance * distance));
+
+	//Final light
+	ambientFinal *= attenuation;
+	diffuseFinal *= attenuation;
+	specularFinal *= attenuation;
+
+	fs_color = 
+	texture(material.diffuseTex, vs_texcoord)
+	* (vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));
+
+	//fs_color = 
+	//(vec4(ambientFinal, 1.f) + vec4(diffuseFinal, 1.f) + vec4(specularFinal, 1.f));
 }

@@ -40,7 +40,7 @@ private:
 	bool firstMouse;
 
 	//Camera
-	//Camera camera;
+	Camera camera;
 
 	//Matrices
 	glm::mat4 ViewMatrix;
@@ -63,12 +63,12 @@ private:
 	std::vector<Material*> materials;
 
 	//Models
-	//std::vector<Model*> models;
+	std::vector<Model*> models;
 
 	std::vector<Mesh*>meshes;
 
 	//Lights
-	//std::vector<PointLight*> pointLights;
+	std::vector<PointLight*> pointLights;
 
 	//Private functions
 	void initGLFW();

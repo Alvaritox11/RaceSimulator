@@ -96,12 +96,12 @@ void Game::initShaders()
 void Game::initTextures()
 {
 	//TEXTURE 0
-	this->textures.push_back(new Texture("Images/car.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/car.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/pusheen.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/pusheen_specular.png", GL_TEXTURE_2D));
 
 	//TEXTURE 1
-	this->textures.push_back(new Texture("Images/pista.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("Images/pista.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -117,7 +117,7 @@ void Game::initOBJModels()
 
 void Game::initModels()
 {
-	
+	std::vector<Mesh*>meshes;
 	std::vector<Mesh*>meshes2;
 
 	Pyramid pyramid_0;
@@ -127,14 +127,14 @@ void Game::initModels()
 	meshes.push_back(
 		new Mesh(
 			&pyramid_0,
-			glm::vec3(0.f, 0.f, 0.f),
-			glm::vec3(0.f, 0.f, 0.f),
+			glm::vec3(1.f, 0.f, 0.f),
+			glm::vec3(0.f),
 			glm::vec3(0.f),
 			glm::vec3(1.f)
 		)
 	);
 
-	/*meshes.push_back(
+	meshes.push_back(
 		new Mesh(
 			&quad_0,
 			glm::vec3(0.f, 0.f, 0.f),
@@ -142,7 +142,7 @@ void Game::initModels()
 			glm::vec3(0.f),
 			glm::vec3(1.f)
 		)
-	);*/
+	);
 
 	meshes2.push_back(
 		new Mesh(
@@ -154,7 +154,7 @@ void Game::initModels()
 		)
 	);
 
-	/*this->models.push_back(new Model(
+	this->models.push_back(new Model(
 		glm::vec3(0.f),
 		this->materials[0],
 		this->textures[TEX_CONTAINER],
@@ -195,13 +195,12 @@ void Game::initModels()
 		this->materials[0],
 		this->textures[TEX_CONTAINER],
 		this->textures[TEX_CONTAINER_SPECULAR],
-		"OBJFiles/ddh.obj"
+		"models/car.obj"
 	)
-	);*/
+	);
 
-	/*for (auto*& i : meshes)
+	for (auto*& i : meshes)
 		delete i;
-		*/
 
 	for (auto*& i : meshes2)
 		delete i;
@@ -209,7 +208,7 @@ void Game::initModels()
 
 void Game::initPointLights()
 {
-	//this->pointLights.push_back(new PointLight(glm::vec3(0.f)));
+	this->pointLights.push_back(new PointLight(glm::vec3(0.f)));
 }
 
 void Game::initLights()
@@ -223,24 +222,24 @@ void Game::initUniforms()
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ViewMatrix, "ViewMatrix");
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 
-	/*for each (PointLight * pl in this->pointLights)
+	for (PointLight* pl : this->pointLights)
 	{
 		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-	}*/
+	}
 }
 
 void Game::updateUniforms()
 {
 	//Update view matrix (camera)
-	/*this->ViewMatrix = this->camera.getViewMatrix();
+	this->ViewMatrix = this->camera.getViewMatrix();
 
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ViewMatrix, "ViewMatrix");
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
 
-	for each (PointLight * pl in this->pointLights)
+	for (PointLight* pl : this->pointLights)
 	{
 		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-	}*/
+	}
 
 	//Update framebuffer size and projection matrix
 	glfwGetFramebufferSize(this->window, &this->framebufferWidth, &this->framebufferHeight);
@@ -266,8 +265,8 @@ Game::Game(
 	WINDOW_WIDTH(WINDOW_WIDTH),
 	WINDOW_HEIGHT(WINDOW_HEIGHT),
 	GL_VERSION_MAJOR(GL_VERSION_MAJOR),
-	GL_VERSION_MINOR(GL_VERSION_MINOR)
-	//camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f))
+	GL_VERSION_MINOR(GL_VERSION_MINOR),
+	camera(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 1.f, 0.f))
 {
 	//Init variables
 	this->window = nullptr;
@@ -323,11 +322,11 @@ Game::~Game()
 	for (size_t i = 0; i < this->materials.size(); i++)
 		delete this->materials[i];
 
-	/*for (auto*& i : this->models)
+	for (auto*& i : this->models)
 		delete i;
 
 	for (size_t i = 0; i < this->pointLights.size(); i++)
-		delete this->pointLights[i];*/
+		delete this->pointLights[i];
 }
 
 //Accessor
@@ -372,7 +371,7 @@ void Game::updateMouseInput()
 	//Move light
 	if (glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{
-		//this->pointLights[0]->setPosition(this->camera.getPosition());
+		this->pointLights[0]->setPosition(this->camera.getPosition());
 	}
 }
 
@@ -384,7 +383,7 @@ void Game::updateKeyboardInput()
 		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 		meshes[0]->move(glm::vec3(0.f, 0.01f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
@@ -404,10 +403,10 @@ void Game::updateKeyboardInput()
 	}
 	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
 		meshes[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
-	}
+	}*/
 
 	//Camera
-	/*if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
+	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		this->camera.move(this->dt, FORWARD);
 	}
@@ -430,7 +429,7 @@ void Game::updateKeyboardInput()
 	if (glfwGetKey(this->window, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		this->camPosition.y += 0.05f;
-	}*/
+	}
 }
 
 void Game::updateInput()
@@ -439,7 +438,7 @@ void Game::updateInput()
 
 	this->updateKeyboardInput();
 	this->updateMouseInput();
-	//this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
+	this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
 }
 
 void Game::update()
@@ -467,10 +466,10 @@ void Game::render()
 	this->updateUniforms();
 
 	//Render models
-	/*for (auto& i : this->models)
-		i->render(this->shaders[SHADER_CORE_PROGRAM]);*/
+	for (auto& i : this->models)
+		i->render(this->shaders[SHADER_CORE_PROGRAM]);
 
-	this->meshes[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	//this->meshes[0]->render(this->shaders[SHADER_CORE_PROGRAM]);
 
 	//End Draw
 	glfwSwapBuffers(window);
