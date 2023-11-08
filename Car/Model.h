@@ -91,6 +91,10 @@ public:
 
 	}
 
+	std::vector<Mesh*> getMeshes() {
+		return meshes;
+	}
+
 	void render(Shader* shader)
 	{
 		//Update the uniforms

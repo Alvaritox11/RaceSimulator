@@ -100,7 +100,7 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("Images/pusheen_specular.png", GL_TEXTURE_2D));
 
 	//TEXTURE 1
-	this->textures.push_back(new Texture("Images/container.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("Images/pista.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
 }
 
@@ -124,7 +124,7 @@ void Game::initModels()
 	Quad quad_0;
 	Quad quad_1;
 
-	meshes.push_back(
+	/*meshes.push_back(
 		new Mesh(
 			&pyramid_0,
 			glm::vec3(1.f, 0.f, 0.f),
@@ -143,7 +143,7 @@ void Game::initModels()
 			glm::vec3(1.f)
 		)
 	);
-
+	*/
 	meshes2.push_back(
 		new Mesh(
 			&quad_1,
@@ -153,7 +153,7 @@ void Game::initModels()
 			glm::vec3(100.f)
 		)
 	);
-
+	/*
 	this->models.push_back(new Model(
 		glm::vec3(0.f),
 		this->materials[0],
@@ -180,9 +180,9 @@ void Game::initModels()
 		meshes
 	)
 	);
-
+	*/
 	this->models.push_back(new Model(
-		glm::vec3(2.f, -5.f, 2.f),
+		glm::vec3(2.f, floor, 2.f),
 		this->materials[0],
 		this->textures[TEX_CONTAINER],
 		this->textures[TEX_CONTAINER_SPECULAR],
@@ -195,7 +195,7 @@ void Game::initModels()
 		this->materials[0],
 		this->textures[TEX_CONTAINER],
 		this->textures[TEX_CONTAINER_SPECULAR],
-		"models/car.obj"
+		"car.obj"
 	)
 	);
 
@@ -383,27 +383,15 @@ void Game::updateKeyboardInput()
 		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
 
-	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(0.f, 0.01f, 0.f));
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+		acceleration += engineForce * dt;
 	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(0.f, -0.01f, 0.f));
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+		acceleration -= engineForce * dt;
 	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(-0.01f, 0.f, 0.f));
+	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
+
 	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(0.01f, 0.f, 0.f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(0.f, 0.f, 0.01f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-		meshes[0]->move(glm::vec3(0.f, 0.f, -0.01f));
-	}
-	if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS) {
-		meshes[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
-	}*/
 
 	//Camera
 	if (glfwGetKey(this->window, GLFW_KEY_W) == GLFW_PRESS)
@@ -447,6 +435,26 @@ void Game::update()
 	this->updateDt();
 	this->updateInput();
 
+	velocity += acceleration;
+	if (velocity >= 10.0f) {
+		velocity = 10.0f;
+	}
+	else if (velocity <= -10.0f) {
+		velocity = -10.0f;
+	}
+	models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
+	if (models[1]->getMeshes()[0]->getPosition().y >= floor) {
+		models[1]->getMeshes()[0]->move(glm::vec3(0.f, -0.01f * gravity, 0.f));
+	}
+	else if (models[1]->getMeshes()[0]->getPosition().y < floor) {
+		models[1]->getMeshes()[0]->setPosition(glm::vec3(
+			models[1]->getMeshes()[0]->getPosition().x,
+			floor,
+			models[1]->getMeshes()[0]->getPosition().z
+		));
+	}
+
+
 	//this->models[0]->rotate(glm::vec3(0.f, 1.f, 0.f));
 	//this->models[1]->rotate(glm::vec3(0.f, 1.f, 0.f));
 	//this->models[2]->rotate(glm::vec3(0.f, 1.f, 0.f));
@@ -459,7 +467,7 @@ void Game::render()
 
 	//DRAW ---
 	//Clear
-	glClearColor(1.f, 0.5f, 0.f, 1.f);
+	glClearColor(0.52f, 0.83f, 1.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 	//Update the uniforms
