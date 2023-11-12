@@ -58,6 +58,7 @@ void Game::initOpenGLOptions()
 	glEnable(GL_DEPTH_TEST);
 
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 
@@ -68,6 +69,7 @@ void Game::initOpenGLOptions()
 
 	//Input
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 }
 
 void Game::initMatrices()
@@ -102,12 +104,17 @@ void Game::initTextures()
 	//TEXTURE 1
 	this->textures.push_back(new Texture("Images/pista.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("Images/container_specular.png", GL_TEXTURE_2D));
+
+	// TEXTURE 2
+	this->textures.push_back(new Texture("models/Model001_Material1.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
 {
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
 		0, 1));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
+		4, 4));
 }
 
 void Game::initOBJModels()
@@ -191,11 +198,11 @@ void Game::initModels()
 	);
 
 	this->models.push_back(new Model(
-		glm::vec3(4.f, 0.f, 4.f),
+		glm::vec3(0.f, 0.f, 0.f),
 		this->materials[0],
-		this->textures[TEX_CONTAINER],
-		this->textures[TEX_CONTAINER_SPECULAR],
-		"car.obj"
+		this->textures[4],
+		this->textures[4],
+		"models/model.obj"
 	)
 	);
 
@@ -442,7 +449,7 @@ void Game::update()
 	else if (velocity <= -10.0f) {
 		velocity = -10.0f;
 	}
-	models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
+	/*models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
 	if (models[1]->getMeshes()[0]->getPosition().y >= floor) {
 		models[1]->getMeshes()[0]->move(glm::vec3(0.f, -0.01f * gravity, 0.f));
 	}
@@ -452,7 +459,7 @@ void Game::update()
 			floor,
 			models[1]->getMeshes()[0]->getPosition().z
 		));
-	}
+	}*/
 
 
 	//this->models[0]->rotate(glm::vec3(0.f, 1.f, 0.f));

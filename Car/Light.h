@@ -34,7 +34,7 @@ protected:
 
 public:
 	PointLight(glm::vec3 position, float intensity = 1.f, glm::vec3 color = glm::vec3(1.f),
-		float constant = 1.f, float linear = 0.045f, float quadratic = 0.0075f)
+		float constant = 1.f, float linear = 0.001f, float quadratic = 0.0001f)
 		: Light(intensity, color)
 	{
 		this->position = position;
