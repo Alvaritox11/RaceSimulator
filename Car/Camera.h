@@ -78,6 +78,13 @@ public:
 		return this->position;
 	}
 
+	void setPosition(const glm::vec3& newPosition)
+	{
+		this->position = newPosition;
+		this->updateCameraVectors();
+	}
+
+
 	//Functions
 	void move(const float& dt, const int direction)
 	{

@@ -21,10 +21,10 @@ private:
 	int framebufferWidth;
 	int framebufferHeight;
 
-	double engineForce = 8.0f;
+	double engineForce = 1.0f;
 	double acceleration = 0.0f;
 	double velocity = 0.0f;
-	double maxVelocity = 100.0f;
+	double maxVelocity = 1.0f;
 	double gravity = 5.0f;
 
 	double floor = -5.0f;
