@@ -41,6 +41,12 @@ private:
 		this->up = glm::normalize(glm::cross(this->right, this->front));
 	}
 
+	void updateCameraVectorsForThirdPerson() {
+		// Suponiendo que worldUp es un vector constante como glm::vec3(0.0f, 1.0f, 0.0f)
+		this->right = glm::normalize(glm::cross(this->front, this->worldUp));
+		this->up = glm::normalize(glm::cross(this->right, this->front));
+	}
+
 public:
 	Camera(glm::vec3 position, glm::vec3 direction, glm::vec3 worldUp)
 	{
@@ -55,7 +61,7 @@ public:
 		this->up = worldUp;
 
 		this->pitch = 0.f;
-		this->yaw = -90.f;
+		this->yaw = 90.f;
 		this->roll = 0.f;
 
 		this->updateCameraVectors();
@@ -81,9 +87,16 @@ public:
 	void setPosition(const glm::vec3& newPosition)
 	{
 		this->position = newPosition;
-		this->updateCameraVectors();
+		//this->updateCameraVectors();
+		this->updateCameraVectorsForThirdPerson();
 	}
 
+	void setFront(const glm::vec3& newFront) {
+		this->front = glm::normalize(newFront);
+		//this->updateCameraVectors();
+		this->updateCameraVectorsForThirdPerson();
+
+	}
 
 	//Functions
 	void move(const float& dt, const int direction)

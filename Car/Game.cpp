@@ -493,36 +493,22 @@ void Game::update()
 		models[1]->getMeshes()[0]->rotate(velocidadRotacion * dt, glm::vec3(0, 1, 0));
 	}
 
-	// Calcula la dirección hacia adelante basada en la rotación actual
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
-
-	// Calcula el movimiento
 	glm::vec3 movement = forwardDirection * (float(velocity) * dt);
-
-	// Aplica el movimiento
 	models[1]->getMeshes()[0]->move(movement);
 
+	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
+	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
+	glm::vec3 backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	//models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
-	/*if (models[1]->getMeshes()[0]->getPosition().y > floor) {
-		models[1]->getMeshes()[0]->move(glm::vec3(0.f, -0.01f * gravity, 0.f));
-	}
-	else if (models[1]->getMeshes()[0]->getPosition().y < floor) {
-		models[1]->getMeshes()[0]->setPosition(glm::vec3(
-			models[1]->getMeshes()[0]->getPosition().x,
-			floor,
-			models[1]->getMeshes()[0]->getPosition().z
-		));
-	}*/
-	//models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
-
-
-	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition(); // Puedes cambiar el �ndice seg�n el modelo que desees seguir
-	glm::vec3 cameraOffset(0.f, 1.0f, -2.0f); // Ajusta el offset seg�n tus necesidades
+	glm::vec3 cameraOffset = backwardDirection * -2.f; // Ajusta el offset seg�n tus necesidades
+	cameraOffset.y += 1.f;
 	glm::vec3 newCameraPosition = modelPosition + cameraOffset;
 
 	// Setea la nueva posici�n de la c�mara
 	camera.setPosition(newCameraPosition);
+
+	camera.setFront(glm::normalize(modelPosition - newCameraPosition));
 }
 
 void Game::render()
