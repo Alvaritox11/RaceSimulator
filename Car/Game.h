@@ -29,6 +29,10 @@ private:
 
 	double floor = -5.0f;
 
+
+	float velocidadRotacionMaxima = 50.f;
+	float velocidadRotacion = 0.0f;
+
 	//OpenGL Context
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;

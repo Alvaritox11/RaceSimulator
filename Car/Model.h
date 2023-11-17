@@ -6,6 +6,8 @@
 #include"Material.h"
 #include"OBJLoader.h"
 
+#include <glm/glm.hpp>
+
 class Model
 {
 private:

@@ -2,6 +2,9 @@
 
 #include<iostream>
 #include<vector>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include"Vertex.h"
 #include"Primitives.h"
@@ -25,6 +28,8 @@ private:
 	glm::vec3 origin;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+
+	glm::quat rotationQuat = glm::quat(1.f, 0.f, 0.f, 0.f);
 
 	glm::mat4 ModelMatrix;
 
@@ -74,10 +79,8 @@ private:
 	{
 		this->ModelMatrix = glm::mat4(1.f);
 		this->ModelMatrix = glm::translate(this->ModelMatrix, this->origin);
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.x), glm::vec3(1.f, 0.f, 0.f));
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.y), glm::vec3(0.f, 1.f, 0.f));
-		this->ModelMatrix = glm::rotate(this->ModelMatrix, glm::radians(this->rotation.z), glm::vec3(0.f, 0.f, 1.f));
 		this->ModelMatrix = glm::translate(this->ModelMatrix, this->position - this->origin);
+		this->ModelMatrix *= glm::toMat4(rotationQuat);
 		this->ModelMatrix = glm::scale(this->ModelMatrix, this->scale);
 	}
 
@@ -193,6 +196,10 @@ public:
 		return position;
 	}
 
+	glm::quat getRotation() {
+		return rotationQuat;
+	}
+
 	//Modifiers
 	void setPosition(const glm::vec3 position)
 	{
@@ -204,9 +211,14 @@ public:
 		this->origin = origin;
 	}
 
-	void setRotation(const glm::vec3 rotation)
-	{
-		this->rotation = rotation;
+
+	void rotate(float angle, glm::vec3 axis) {
+		rotationQuat = glm::rotate(rotationQuat, glm::radians(angle), axis);
+	}
+
+	glm::vec3 getForwardDirection() {
+		// Asume que el vector hacia adelante inicial es (0, 0, -1)
+		return glm::rotate(rotationQuat, glm::vec3(0.0f, 0.0f, -1.0f));
 	}
 
 	void setScale(const glm::vec3 setScale)

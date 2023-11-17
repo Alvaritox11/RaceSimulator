@@ -198,7 +198,7 @@ void Game::initModels()
 	);
 
 	this->models.push_back(new Model(
-		glm::vec3(0.f, 0.f, 0.f),
+		glm::vec3(0.f, 2.f, 0.f),
 		this->materials[0],
 		this->textures[4],
 		this->textures[4],
@@ -411,6 +411,26 @@ void Game::updateKeyboardInput()
 			velocity = 0;
 		}
 	}
+
+	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+		// Girar a la derecha
+		velocidadRotacion = -velocidadRotacionMaxima;
+	}
+	else if (glfwGetKey(this->window, GLFW_KEY_RIGHT) != GLFW_PRESS && velocidadRotacion < 0) {
+		// Girar a la izquierda
+		velocidadRotacion = 0.f;
+	}
+	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+		// Girar a la izquierda
+		velocidadRotacion = velocidadRotacionMaxima;
+	}
+	else if (glfwGetKey(this->window, GLFW_KEY_LEFT) != GLFW_PRESS && velocidadRotacion > 0) {
+		// Girar a la izquierda
+		velocidadRotacion = 0.f;
+	}
+
+
+
 	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
 
 	}
@@ -442,7 +462,6 @@ void Game::updateKeyboardInput()
 	}
 }
 
-
 void Game::updateInput()
 {
 	glfwPollEvents();
@@ -455,10 +474,12 @@ void Game::updateInput()
 void Game::update()
 {
 	std::cout << "Velocity: " << velocity << std::endl;
+
+
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
-
+	std::cout << "Rotacion: " << velocidadRotacion << std::endl;
 	//velocity += acceleration;
 	if (velocity >= 1.0f) {
 		velocity = 1.0f;
@@ -466,8 +487,24 @@ void Game::update()
 	else if (velocity <= -1.0f) {
 		velocity = -1.0f;
 	}
-	models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
-	if (models[1]->getMeshes()[0]->getPosition().y > floor) {
+
+	// Aplica la rotación
+	if (velocidadRotacion != 0.f) {
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion * dt, glm::vec3(0, 1, 0));
+	}
+
+	// Calcula la dirección hacia adelante basada en la rotación actual
+	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+
+	// Calcula el movimiento
+	glm::vec3 movement = forwardDirection * (float(velocity) * dt);
+
+	// Aplica el movimiento
+	models[1]->getMeshes()[0]->move(movement);
+
+
+	//models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
+	/*if (models[1]->getMeshes()[0]->getPosition().y > floor) {
 		models[1]->getMeshes()[0]->move(glm::vec3(0.f, -0.01f * gravity, 0.f));
 	}
 	else if (models[1]->getMeshes()[0]->getPosition().y < floor) {
@@ -476,14 +513,15 @@ void Game::update()
 			floor,
 			models[1]->getMeshes()[0]->getPosition().z
 		));
-	}
-	models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
+	}*/
+	//models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
 
-	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition(); // Puedes cambiar el índice según el modelo que desees seguir
-	glm::vec3 cameraOffset(0.f, 1.0f, -2.0f); // Ajusta el offset según tus necesidades
+
+	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition(); // Puedes cambiar el �ndice seg�n el modelo que desees seguir
+	glm::vec3 cameraOffset(0.f, 1.0f, -2.0f); // Ajusta el offset seg�n tus necesidades
 	glm::vec3 newCameraPosition = modelPosition + cameraOffset;
 
-	// Setea la nueva posición de la cámara
+	// Setea la nueva posici�n de la c�mara
 	camera.setPosition(newCameraPosition);
 }
 
