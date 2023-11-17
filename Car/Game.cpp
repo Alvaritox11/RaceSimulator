@@ -390,22 +390,22 @@ void Game::updateKeyboardInput()
 		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		velocity += engineForce * dt;
+		velocity += engineForce * 0.005;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_UP) != GLFW_PRESS && velocity > 0)
 	{
-		velocity -= engineForce * 0.6f * dt;
+		velocity -= engineForce * 0.4f * 0.005;
 		if (velocity < 0)
 		{
 			velocity = 0;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		velocity -= engineForce * dt;
+		velocity -= engineForce * 0.005;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_DOWN) != GLFW_PRESS && velocity < 0)
 	{
-		velocity += engineForce * 0.6f * dt;
+		velocity += engineForce * 0.4f * 0.005;
 		if (velocity > 0)
 		{
 			velocity = 0;
@@ -481,11 +481,11 @@ void Game::update()
 	this->updateInput();
 	std::cout << "Rotacion: " << velocidadRotacion << std::endl;
 	//velocity += acceleration;
-	if (velocity >= 100.0f) {
-		velocity = 100.0f;
+	if (velocity >= 30.0f) {
+		velocity = 30.0f;
 	}
-	else if (velocity <= -100.0f) {
-		velocity = -100.0f;
+	else if (velocity <= -30.0f) {
+		velocity = -30.0f;
 	}
 
 	// Aplica la rotación
