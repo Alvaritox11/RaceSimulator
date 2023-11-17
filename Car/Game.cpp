@@ -389,12 +389,27 @@ void Game::updateKeyboardInput()
 	{
 		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 	}
-
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
 		velocity += engineForce * dt;
 	}
+	else if (glfwGetKey(window, GLFW_KEY_UP) != GLFW_PRESS && velocity > 0)
+	{
+		velocity -= engineForce * 0.1f * dt;
+		if (velocity < 0)
+		{
+			velocity = 0;
+		}
+	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		velocity -= engineForce * dt;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_DOWN) != GLFW_PRESS && velocity < 0)
+	{
+		velocity += engineForce * 0.1f * dt;
+		if (velocity > 0)
+		{
+			velocity = 0;
+		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
 
@@ -426,6 +441,7 @@ void Game::updateKeyboardInput()
 		this->camPosition.y += 0.05f;
 	}
 }
+
 
 void Game::updateInput()
 {
@@ -463,11 +479,11 @@ void Game::update()
 	}
 	models[1]->getMeshes()[0]->move(glm::vec3(0.f, 0.f, 0.01f * velocity));
 
-	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition(); // Puedes cambiar el Ìndice seg˙n el modelo que desees seguir
-	glm::vec3 cameraOffset(0.f, 1.0f, -2.0f); // Ajusta el offset seg˙n tus necesidades
+	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition(); // Puedes cambiar el √≠ndice seg√∫n el modelo que desees seguir
+	glm::vec3 cameraOffset(0.f, 1.0f, -2.0f); // Ajusta el offset seg√∫n tus necesidades
 	glm::vec3 newCameraPosition = modelPosition + cameraOffset;
 
-	// Setea la nueva posiciÛn de la c·mara
+	// Setea la nueva posici√≥n de la c√°mara
 	camera.setPosition(newCameraPosition);
 }
 
