@@ -198,7 +198,7 @@ void Game::initModels()
 	);
 
 	this->models.push_back(new Model(
-		glm::vec3(0.f, 2.f, 0.f),
+		glm::vec3(0.f, floor + 0.25, 0.f),
 		this->materials[0],
 		this->textures[4],
 		this->textures[4],
@@ -368,8 +368,8 @@ void Game::updateMouseInput()
 	}
 
 	//Calc offset
-	this->mouseOffsetX = this->mouseX - this->lastMouseX;
-	this->mouseOffsetY = this->lastMouseY - this->mouseY;
+	this->mouseOffsetX = (this->mouseX - this->lastMouseX) * 10;
+	this->mouseOffsetY = (this->lastMouseY - this->mouseY) * 10;
 
 	//Set last X and Y
 	this->lastMouseX = this->mouseX;
@@ -394,7 +394,7 @@ void Game::updateKeyboardInput()
 	}
 	else if (glfwGetKey(window, GLFW_KEY_UP) != GLFW_PRESS && velocity > 0)
 	{
-		velocity -= engineForce * 0.1f * dt;
+		velocity -= engineForce * 0.6f * dt;
 		if (velocity < 0)
 		{
 			velocity = 0;
@@ -405,7 +405,7 @@ void Game::updateKeyboardInput()
 	}
 	else if (glfwGetKey(window, GLFW_KEY_DOWN) != GLFW_PRESS && velocity < 0)
 	{
-		velocity += engineForce * 0.1f * dt;
+		velocity += engineForce * 0.6f * dt;
 		if (velocity > 0)
 		{
 			velocity = 0;
@@ -481,11 +481,11 @@ void Game::update()
 	this->updateInput();
 	std::cout << "Rotacion: " << velocidadRotacion << std::endl;
 	//velocity += acceleration;
-	if (velocity >= 1.0f) {
-		velocity = 1.0f;
+	if (velocity >= 100.0f) {
+		velocity = 100.0f;
 	}
-	else if (velocity <= -1.0f) {
-		velocity = -1.0f;
+	else if (velocity <= -100.0f) {
+		velocity = -100.0f;
 	}
 
 	// Aplica la rotación
