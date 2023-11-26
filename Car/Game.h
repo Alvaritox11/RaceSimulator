@@ -13,29 +13,27 @@ enum mesh_enum { MESH_QUAD = 0 };
 class Game
 {
 private:
-	//Variables
-		//Window
+	//Private Variables
+	//Window
 	GLFWwindow* window;
 	const int WINDOW_WIDTH;
 	const int WINDOW_HEIGHT;
 	int framebufferWidth;
 	int framebufferHeight;
 
-	double engineForce = 10.0f;
-	double acceleration = 0.0f;
-	double velocity = 0.0f;
-	double maxVelocity = 10.0f;
-	double gravity = 5.0f;
-
-	double floor = -5.0f;
-
-
-	float velocidadRotacionMaxima = 50.f;
-	float velocidadRotacion = 0.0f;
-
 	//OpenGL Context
 	const int GL_VERSION_MAJOR;
 	const int GL_VERSION_MINOR;
+
+	//Car Movement
+	double engineForce = 10.0f;
+	double floor = -5.0f;
+
+	double velocity = 0.0f;
+	double maxVelocity = 20.0f;
+	
+	float velocidadRotacionMaxima = 50.f;
+	float velocidadRotacion = 0.0f;
 
 	//Delta time
 	float dt;
@@ -50,6 +48,15 @@ private:
 	double mouseOffsetX;
 	double mouseOffsetY;
 	bool firstMouse;
+
+	//PlayMode
+	int playCam;
+
+	//ImGui Fonts
+	ImFont* font1; 
+	ImFont* font2; 
+	ImFont* font3;
+	ImFont* font4;
 
 	//Camera
 	Camera camera;
@@ -77,17 +84,16 @@ private:
 	//Models
 	std::vector<Model*> models;
 
-	std::vector<Mesh*>meshes;
+	//Meshes
+	std::vector<Mesh*> meshes;
 
 	//Lights
 	std::vector<PointLight*> pointLights;
 
 	//Private functions
+	//Inits
 	void initGLFW();
-	void initWindow(
-		const char* title,
-		bool resizable
-	);
+	void initWindow(const char* title, bool resizable);
 	void initGLEW(); //AFTER CONTEXT CREATION!!!
 	void initOpenGLOptions();
 	void initMatrices();
@@ -99,10 +105,10 @@ private:
 	void initPointLights();
 	void initLights();
 	void initUniforms();
-
+	void initImGui();
+	
+	void drawLoadingScreen(const char* loadingMessage);
 	void updateUniforms();
-
-	//Static variables
 
 public:
 	//Constructors / Destructors
@@ -112,21 +118,36 @@ public:
 		const int GL_VERSION_MAJOR, const int GL_VERSION_MINOR,
 		bool resizable
 	);
+
 	virtual ~Game();
 
 	//Accessors
 	int getWindowShouldClose();
+	GLFWwindow* getWindow() { return window; }
 
 	//Modifiers
 	void setWindowShouldClose();
 
+	//ImGui
+	int menuPrincipal();
+	
 	//Functions
 	void updateDt();
 	void updateMouseInput();
 	void updateKeyboardInput();
 	void updateInput();
-	void update();
-	void render();
+	
+	//PlayMode
+	void velocityUI();
+	void timeUI();
+	void updatePlay();
+	void renderPlay();
+	void mapUI();
+
+	//ViewMode
+	void menuCams();
+	void updateView();
+	void renderView();
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

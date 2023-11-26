@@ -41,98 +41,7 @@ void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH) {
     glViewport(0, 0, fbW, fbH);
 }
 
-/*bool loadShaders(GLuint& program) {
-    bool loadSuccess = true;
-    char infoLog[512];
-    GLint success;
-
-    std::string temp = "";
-    std::string src = "";
-
-    std::ifstream in_file;
-
-    // Vertex
-    in_file.open("vertex_core.glsl");
-
-    if (in_file.is_open()) {
-        while (std::getline(in_file, temp)) {
-            src += temp + "\n";
-        }
-    }
-    else {
-        std::cout << "[!] COULD NOT OPEN VERTEX FILE" << "\n";
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    const GLchar* vertSrc = src.c_str();
-    glShaderSource(vertexShader, 1, &vertSrc, NULL);
-    glCompileShader(vertexShader);
-
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "[!] COULD NOT COMPILE VERTEX SHADER" << "\n";
-        std::cout << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    temp = "";
-    src = "";
-
-    // Fragment
-    in_file.open("fragment_core.glsl");
-
-    if (in_file.is_open()) {
-        while (std::getline(in_file, temp)) {
-            src += temp + "\n";
-        }
-    }
-    else {
-        std::cout << "[!] COULD NOT OPEN FRAGMENT FILE" << "\n";
-        loadSuccess = false;
-    }
-
-    in_file.close();
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    const GLchar* fragSrc = src.c_str();
-    glShaderSource(fragmentShader, 1, &fragSrc, NULL);
-    glCompileShader(fragmentShader);
-
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "[!] COULD NOT COMPILE FRAGMENT SHADER" << "\n";
-        std::cout << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    program = glCreateProgram();
-
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-
-    glLinkProgram(program);
-
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(program, 512, NULL, infoLog);
-        std::cout << "[!] COULD NOT LINK PROGRAM" << "\n";
-        std::cout << infoLog << "\n";
-        loadSuccess = false;
-    }
-
-    glUseProgram(0);
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return loadSuccess;
-}*/
-
-void updateInput(GLFWwindow* window, Mesh &mesh) {
+void updateInput(GLFWwindow* window, Mesh& mesh) {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         mesh.move(glm::vec3(0.f, 0.01f, 0.f));
     }
@@ -177,22 +86,50 @@ GLFWwindow* createWindow(
     //glViewport(0, 0, framebufferWidth, framebufferHeight);
 
     glfwMakeContextCurrent(window);
-    
+
     return window;
 }
 
 int main(void)
 {
     Game game("Racing Game",
-        640, 480,
-        4, 4,
+        1280, 720,
+        3, 3,
         false);
+
+    int startGame = 0;
 
     while (!game.getWindowShouldClose()) {
         // UPDATE INPUT
-        game.update();
-        game.render();
+        //std::cout << "Estado de juego: " << startGame << std::endl;
+
+        if (startGame == 2) {
+            game.updateView();
+            game.renderView();
+            game.menuCams();
+        }
+
         
+        if (startGame == 1) {
+            game.updatePlay();
+            game.renderPlay();
+            game.velocityUI();
+            game.timeUI();
+            game.mapUI();
+        }
+
+        if (startGame == 0) {
+            // Solo renderiza el menú principal si no estás en la vista de menú
+            startGame = game.menuPrincipal();
+        }
+
+        glfwSwapBuffers(game.getWindow());
+        glfwPollEvents();
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     return 0;
 }
