@@ -90,6 +90,24 @@ GLFWwindow* createWindow(
     return window;
 }
 
+double lastTime = glfwGetTime();
+int nbFrames = 0;
+
+
+void fpsCounter(GLFWwindow* window) {
+    double currentTime = glfwGetTime();
+    nbFrames++;
+    if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1 sec ago
+        // printf and reset timer
+        // Set the window title
+        double fps = static_cast<double>(nbFrames) / (currentTime - lastTime);
+        std::string title = std::to_string(fps);
+        glfwSetWindowTitle(window, title.c_str());
+        nbFrames = 0;
+        lastTime = currentTime;
+    }
+}
+
 int main(void)
 {
     Game game("Racing Game",
@@ -97,30 +115,59 @@ int main(void)
         3, 3,
         false);
 
-    int startGame = 0;
+    game.loadGameStates();
+
+    std::cout << game.gameStates.size() << std::endl;
 
     while (!game.getWindowShouldClose()) {
         // UPDATE INPUT
         //std::cout << "Estado de juego: " << startGame << std::endl;
 
-        if (startGame == 2) {
+        if (game.getStartGame() == 2) {
+            fpsCounter(game.getWindow());
             game.updateView();
+            game.updateViewCams();
             game.renderView();
             game.menuCams();
         }
 
         
-        if (startGame == 1) {
-            game.updatePlay();
-            game.renderPlay();
-            game.velocityUI();
-            game.timeUI();
-            game.mapUI();
+        if (game.getStartGame() == 1) {
+            // Renderiza el coche un instante y no lo vuelve a hacer
+            if (!game.flag2) {
+                game.updatePlay();
+                game.flag2 = true;
+            }
+            // Cuenta atras
+            if (!game.flag1) {
+                if (!game.startTime2Status) {
+                    game.startCountdownTimer();
+                    game.startTime2Status = true;
+                }
+                game.renderPlay();
+                game.countDownUI(game.flag1);
+            }
+            // Empieza el juego
+            else if (game.flag1) {
+                fpsCounter(game.getWindow());
+                if (!game.startTimeStatus) {
+					game.startRaceTimer();
+                    game.gameStates.clear();
+                    game.clearFile("gamestates.txt");
+					game.startTimeStatus = true;
+				}
+                game.updatePlay();
+                //game.updateView();
+                game.renderPlay();
+                game.velocityUI();
+                game.timeUI();
+                game.lapUI();
+                game.mapUI();
+            }
         }
 
-        if (startGame == 0) {
-            // Solo renderiza el menú principal si no estás en la vista de menú
-            startGame = game.menuPrincipal();
+        if (game.getStartGame() == 0) {
+            int startGame = game.menuPrincipal();
         }
 
         glfwSwapBuffers(game.getWindow());

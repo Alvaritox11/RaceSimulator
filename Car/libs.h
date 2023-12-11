@@ -30,3 +30,8 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Model.h"
+#include "Checkpoint.h"
+#include "GameState.h"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/vector.hpp>

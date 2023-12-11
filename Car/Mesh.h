@@ -214,6 +214,16 @@ public:
 		this->origin = origin;
 	}
 
+	void setRotation(const glm::vec3 rotation)
+	{
+		this->rotation = rotation;
+	}
+
+	void setRotation(const glm::quat rotation)
+	{
+		this->rotationQuat = rotation;
+	}
+
 
 	void rotate(float angle, glm::vec3 axis) {
 		rotationQuat = glm::rotate(rotationQuat, glm::radians(angle), axis);

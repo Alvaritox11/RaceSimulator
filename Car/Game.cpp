@@ -120,8 +120,9 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/circuit.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/mask3.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/circuit_borders.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/car_icon.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/car_icon2.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/blue.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/preview.jpg", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -130,6 +131,10 @@ void Game::initMaterials()
 		0, 1));
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f),
 		4, 4));
+
+	this->materials.push_back(new Material(glm::vec3(1.f), glm::vec3(0.f), glm::vec3(0.f),
+		0, -1));
+
 }
 
 void Game::initOBJModels()
@@ -151,18 +156,30 @@ void Game::initModels()
 		this->materials[0],
 		this->textures[5],
 		this->textures[5],
-		"models/montmelo2v2.obj"
+		"models/montmelo2v3.obj"
 	)
 	);
 
+
 	this->models.push_back(new Model(
-		glm::vec3(0.f, floor + 0.25, 0.f),
+		glm::vec3(-85.f, floor + 0.25, -60.f),
 		this->materials[0],
 		this->textures[4],
 		this->textures[4],
 		"models/model.obj"
 	)
 	);
+
+	this->models.push_back(new Model(
+		glm::vec3(-60.f, floor + 100, -75.f),
+		this->materials[2],
+		this->textures[11],
+		this->textures[11],
+		"models/skybox/cuboklk.obj"
+	)
+	);
+
+	models[1]->getMeshes()[0]->rotate(90, glm::vec3(0, 1, 0));
 
 	for (auto*& i : meshes)
 		delete i;
@@ -173,7 +190,7 @@ void Game::initModels()
 
 void Game::initPointLights()
 {
-	this->pointLights.push_back(new PointLight(glm::vec3(0.f, 25.f, 0.f)));
+	this->pointLights.push_back(new PointLight(glm::vec3(0.f, 150.f, 0.f)));
 }
 
 void Game::initLights()
@@ -203,10 +220,42 @@ void Game::initImGui()
 	font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF(".\\fonts\\race.ttf", 60.0f);
 	font3 = io.Fonts->AddFontFromFileTTF(".\\fonts\\velocity.ttf", 20.0f);
+	font4 = io.Fonts->AddFontFromFileTTF(".\\fonts\\race.ttf", 50.0f);
 
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+void Game::initCheckpoints()
+{
+	std::vector<glm::vec3> points = { 
+					glm::vec3(39, -4.75, -60),
+					glm::vec3(131, -4.75, -60),
+					glm::vec3(175, -4.75, -22),
+					glm::vec3(214, -4.75, 25),
+					glm::vec3(137, -4.75, 70),
+					glm::vec3(74, -4.75, 50),
+					glm::vec3(132, -4.75, 23),
+					glm::vec3(154, -4.75, -6),
+					glm::vec3(80, -4.75, -33),
+					glm::vec3(51, -4.75, -10),
+					glm::vec3(11, -4.75, 55),
+					glm::vec3(-40, -4.75, 50),
+					glm::vec3(-155, -4.75, -17),
+					glm::vec3(-175, -4.75, 15),
+					glm::vec3(-134, -4.75, 45),
+					glm::vec3(-182, -4.75, 52),
+					glm::vec3(-201, -4.75, 12),
+					glm::vec3(-220, -4.75, -34),
+					glm::vec3(-180, -4.75, -60),
+					glm::vec3(-85, -4.75, -59)
+	};
+
+	for (const auto& point : points) {
+		Checkpoint* aux = new Checkpoint(point);
+		checkpoints.push_back(aux);
+	}
 }
 
 void Game::updateUniforms()
@@ -348,7 +397,8 @@ Game::Game(
 	this->initLights();
 	this->initUniforms();
 	drawLoadingScreen("LOADING...");
-
+	
+	this->initCheckpoints();
 }
 
 Game::~Game()
@@ -396,6 +446,7 @@ void Game::setWindowShouldClose()
 
 int Game::menuPrincipal()
 {
+	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
@@ -429,7 +480,6 @@ int Game::menuPrincipal()
 	ImGui::Dummy(ImVec2(0.0f, 40.0f));
 	float buttonWidth = 400.0f;
 
-	int startGame = 0;
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("START RACE", ImVec2(buttonWidth, 50))) {
 		startGame = 1;
@@ -497,8 +547,14 @@ void Game::menuCams()
 
 	ImGui::SetNextWindowPos(windowPosTopLeft, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeTopLeft, ImGuiCond_Always);
-	ImGui::Begin("Participante X", nullptr, flags);
-	ImGui::Text("Hello, world!");
+	ImGui::Begin("Camara", nullptr, flags);
+	int cam = camera.getType() - 1;
+	if (cam >= 2 && cam <= 14) {
+		ImGui::Text("CAMERA %d", cam);
+	}
+	else {
+		ImGui::Text("PARTICIPANT %d", cam);
+	}
 	ImGui::End();
 
 	// Menú de abajo con trece botones
@@ -538,7 +594,7 @@ void Game::velocityUI()
 	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
 
 	char speedText[50];
-	snprintf(speedText, sizeof(speedText), "%.2f Km/h", abs(this->velocity * (-12)));
+	snprintf(speedText, sizeof(speedText), "%.2f Km/h", this->velocity * (-12));
 
 	// Calcula el tamaño y la posición de la ventana basado en el tamaño de la pantalla y los márgenes deseados
 	const ImVec2 margin = ImVec2(40, 40);  // Margen de 40 píxeles por cada lado
@@ -623,7 +679,7 @@ void Game::mapUI() {
 		float endY = 196 * 2;
 
 		glm::vec3 position = models[1]->getMeshes()[0]->getPosition();
-		
+
 
 		float moveX = clamp(998 * ((position.x + 246) / 498), 0, 998); // 0 - 998
 		float moveY = clamp(385 * ((position.z + 95) / 194), 0, 385); // 0 - 385
@@ -635,7 +691,7 @@ void Game::mapUI() {
 		);
 
 		ImGui::GetWindowDrawList()->AddImage(
-			(void*)(intptr_t)7,
+			(void*)(intptr_t)10,
 			ImVec2(startX - moveX + margin.x,
 				startY - moveY - margin.x),
 			ImVec2(startX + endX - moveX + margin.x,
@@ -656,7 +712,7 @@ void Game::mapUI() {
 		stbi_image_free(imageData); // Free the image data when done
 	}
 	// Renderiza el frame
-	
+
 	ImGui::EndFrame();
 
 }
@@ -674,7 +730,8 @@ void Game::timeUI()
 	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
 
 	// Usar Chrono para medir el tiempo
-	static auto startTime = std::chrono::steady_clock::now();
+	//static 
+	//startTime = std::chrono::steady_clock::now();
 	auto currentTime = std::chrono::steady_clock::now();
 	std::chrono::duration<float> elapsed = currentTime - startTime;
 
@@ -713,6 +770,183 @@ void Game::timeUI()
 	ImGui::EndFrame();
 }
 
+void Game::positionUI()
+{
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoBackground;
+
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+
+	// Configuración de la ventana ImGui
+	const ImVec2 window_pos = ImVec2(150.f, 50.f);
+	const ImVec2 window_size = ImVec2(0, 0);  // El tamaño se ajusta automáticamente basado en el contenido
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Position", nullptr, flags);
+	ImGui::PushFont(font3);
+
+	ImGui::Text("1ero");
+
+	ImGui::PopFont();
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::EndFrame();
+}
+
+void Game::lapUI()
+{
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoBackground;
+
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+
+	// Configuración de la ventana ImGui
+	const ImVec2 window_pos = ImVec2(150.f, 50.f);
+	const ImVec2 window_size = ImVec2(0, 0);  // El tamaño se ajusta automáticamente basado en el contenido
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Lap", nullptr, flags);
+	ImGui::PushFont(font3);
+
+	ImGui::Text("%d / 3", lap);
+
+	ImGui::PopFont();
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::EndFrame();
+}
+
+void Game::countDownUI(bool &flag)
+{
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse  |
+		ImGuiWindowFlags_NoBackground;
+
+
+	// Usar Chrono para medir el tiempo
+	//startTime2 = std::chrono::steady_clock::now();
+	auto currentTime2 = std::chrono::steady_clock::now();
+	std::chrono::duration<float> elapsed2 = currentTime2 - startTime2;
+	const float totalDuration = 4.0f;
+	float timeRemaining = totalDuration - elapsed2.count();
+	if (timeRemaining <= 0.0f) {
+		timeRemaining = 0.0f;
+		startRaceTimer();
+		flag = true;
+	}
+	int seconds = static_cast<int>(timeRemaining) % 60;
+
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+	const ImVec2 window_size = ImVec2(300, 400); 
+	const ImVec2 window_pos = ImVec2((screenSize.x + window_size.x) * 0.5f, (screenSize.y + window_size.y) * 0.5f);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Time", nullptr, flags);
+	ImGui::PushFont(font4);
+
+	const char* title = "X";
+	ImVec2 textSize = ImGui::CalcTextSize(title);
+	ImGui::SetCursorPosX((window_size.x - textSize.x) * 0.5f);
+	ImGui::Text("%d", seconds);
+
+	ImGui::PopFont();
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::EndFrame();
+}
+
+void Game::startingUI()
+{
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse  |
+		ImGuiWindowFlags_NoBackground;
+
+	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
+	const ImVec2 window_size = ImVec2(300, 400);
+	const ImVec2 window_pos = ImVec2((screenSize.x + window_size.x) * 0.5f, (screenSize.y + window_size.y) * 0.5f);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Time", nullptr, flags);
+	ImGui::PushFont(font4);
+
+	const char* title = "START";
+	ImVec2 textSize = ImGui::CalcTextSize(title);
+	ImGui::SetCursorPosX((window_size.x - textSize.x) * 0.5f);
+	ImGui::Text(title);
+
+	ImGui::PopFont();
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	ImGui::EndFrame();
+}
+
+void Game::UIPlay()
+{
+	if (!flag)
+		this->countDownUI(flag);
+	else if (flag) {
+		static auto count = 500;
+		if (count > 0)
+			this->startingUI();
+		count--;
+		this->velocityUI();
+		this->timeUI();
+		this->lapUI();
+		//positionUI();
+		this->mapUI();
+	}
+}
+
 // ===============================================================
 // Functions =====================================================
 // ===============================================================
@@ -722,6 +956,13 @@ void Game::updateDt()
 	this->curTime = static_cast<float>(glfwGetTime());
 	this->dt = this->curTime - this->lastTime;
 	this->lastTime = this->curTime;
+
+	/*this->start = clock::now();
+	this->end = clock::now();
+	std::chrono::duration<float> elapsed_seconds = end - start;
+	this->dt = elapsed_seconds.count();
+
+	std::cout << "Delta time: " << this-dt << "segundos " << std::endl;*/
 }
 
 void Game::updateMouseInput()
@@ -755,25 +996,29 @@ void Game::updateKeyboardInput()
 	//Program
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
-		glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		saveGameStates();
+		gameStates.clear();
+		reset();
+
 	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		velocity += engineForce * 0.005;
+		velocity += engineForce * 0.005 * dt;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_DOWN) != GLFW_PRESS && velocity > 0)
 	{
-		velocity -= engineForce * 0.4f * 0.005;
+		velocity -= engineForce * 0.4f * 0.005 * dt;
 		if (velocity < 0)
 		{
 			velocity = 0;
 		}
 	}
 	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-		velocity -= engineForce * 0.005;
+		velocity -= engineForce * 0.005 * dt;
 	}
 	else if (glfwGetKey(window, GLFW_KEY_UP) != GLFW_PRESS && velocity < 0)
 	{
-		velocity += engineForce * 0.4f * 0.005;
+		velocity += engineForce * 0.4f * 0.005 * dt;
 		if (velocity > 0)
 		{
 			velocity = 0;
@@ -782,7 +1027,8 @@ void Game::updateKeyboardInput()
 
 	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		// Girar a la derecha
-		velocidadRotacion = -velocidadRotacionMaxima;
+		if (velocity != 0)
+			velocidadRotacion -= 2 * dt;
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_RIGHT) != GLFW_PRESS && velocidadRotacion < 0) {
 		// Girar a la izquierda
@@ -790,15 +1036,28 @@ void Game::updateKeyboardInput()
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		// Girar a la izquierda
-		velocidadRotacion = velocidadRotacionMaxima;
+		if (velocity != 0)
+			velocidadRotacion += 2 * dt;
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_LEFT) != GLFW_PRESS && velocidadRotacion > 0) {
 		// Girar a la izquierda
 		velocidadRotacion = 0.f;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
+		if (camera.getType() != 1)
+			camera.setType(1);
+	}
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+		if (camera.getType() != 0)
+			camera.setType(0);
+	}
 
+	if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS) {
+		if (camera.getType() == 0)
+			camera.setType(1);
+		else
+			camera.setType(0);
 	}
 
 	//Camera
@@ -853,13 +1112,47 @@ std::string vec3ToString(const glm::vec3& vec) {
 	return "(" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + ", " + std::to_string(vec.z) + ")";
 }
 
+/*namespace boost {
+	namespace serialization {
+
+		template<class Archive>
+		void save(Archive& ar, std::vector<GameState>& vec, const unsigned int version) {
+			unsigned int size = static_cast<unsigned int>(vec.size());
+			ar& size; // Serialize the size first
+
+			for (size_t i = 0; i < vec.size(); ++i) {
+				ar& vec[i]; // Serialize individual GameState objects
+			}
+		}
+
+		template<class Archive>
+		void load(Archive& ar, std::vector<GameState>& vec, const unsigned int version) {
+			unsigned int size;
+			ar& size; // Deserialize the size first
+
+			vec.resize(size); // Resize the vector to accommodate the elements
+
+			for (size_t i = 0; i < size; ++i) {
+				ar& vec[i]; // Deserialize individual GameState objects
+			}
+		}
+
+	} // namespace serialization
+} // namespace boost */
+
+int frame = 0;
+
 void Game::updatePlay()
 {
+
+	//std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", " 
+		//<< models[1]->getMeshes()[0]->getPosition().y << ", " << models[1]->getMeshes()[0]->getPosition().z << ")" << std::endl;
+
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
 
-	camera.setType(0); //THIRD
+	//camera.setType(0); //THIRD
 
 	//velocity += acceleration;
 	if (velocity >= maxVelocity) {
@@ -869,32 +1162,218 @@ void Game::updatePlay()
 		velocity = -maxVelocity;
 	}
 
+	if (velocidadRotacion >= velocidadRotacionMaxima) {
+		velocidadRotacion = velocidadRotacionMaxima;
+	}
+	else if (velocidadRotacion <= -velocidadRotacionMaxima) {
+		velocidadRotacion = -velocidadRotacionMaxima;
+	}
+
+	if (startTimeStatus) {
+		gameStates.push_back(GameState(dt, 
+			glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS, 
+			glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS, 
+			glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS, 
+			glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS));
+		/*if (gameStates.size() >= 2000) {
+			saveGameStates();
+			gameStates.clear();
+		}*/
+	}
+
+	frame++;
+	std::cout << frame << std::endl;
+
 	// Aplica la rotación
 	if (velocidadRotacion != 0.f) {
-		models[1]->getMeshes()[0]->rotate(velocidadRotacion * dt, glm::vec3(0, 1, 0));
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion, glm::vec3(0, 1, 0)); // * dt
 	}
 
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
-	glm::vec3 movement = forwardDirection * (float(velocity) * dt);
-	models[1]->getMeshes()[0]->move(movement);
+	glm::vec3 movement = forwardDirection * (float(velocity));
+	models[1]->getMeshes()[0]->move(movement); // * dt
 
 	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
-
-	std::string title = "Racing Game";
-	glm::vec3 position = models[1]->getMeshes()[0]->getPosition();
-	std::string positionString = vec3ToString(position);
-	title += positionString;
-	glfwSetWindowTitle(this->window, title.c_str());
-
 	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
-	glm::vec3 backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	glm::vec3 cameraOffset = backwardDirection * -2.f; 
-	cameraOffset.y += 1.f;
-	glm::vec3 newCameraPosition = modelPosition + cameraOffset;
+	glm::vec3 cameraOffset, newCameraPosition, backwardDirection;
+	if (camera.getType() == 0) { //THIRD
+		backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		cameraOffset = backwardDirection * -2.f;
+		cameraOffset.y += 1.f;
+		newCameraPosition = modelPosition + cameraOffset;
+
+		camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+	}
+	else { //FIRST
+		forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+		cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f); 
+		newCameraPosition = modelPosition + cameraOffset;
+		camera.setFront(forwardDirection);
+	}
 
 	camera.setPosition(newCameraPosition);
-	camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+
+	//CHECKPOINT
+	Checkpoint* actCheck = checkpoints[aux];
+	if (actCheck->passed(models[1]->getMeshes()[0]->getPosition())) {
+		aux++;
+		checkpointsPassed++;
+		if (aux == 20)
+			aux %= 20;
+		if (checkpointsPassed % 20 == 0)
+			lap++;
+	}
+
+	if (lap == 2)
+	{
+		saveGameStates();
+		gameStates.clear();
+		reset();
+	}
+	
+}
+
+void Game::updateView()
+{
+	std::cout << frame << std::endl;
+	if (frame < gameStates.size()) {
+		std::cout << gameStates[frame].dt << gameStates[frame].up << gameStates[frame].down << gameStates[frame].right << gameStates[frame].left << std::endl;
+		//this->updateDt();
+		dt = gameStates[frame].dt;
+		if (gameStates[frame].down) {
+			velocity += engineForce * 0.005 * dt;
+		}
+		else if (!gameStates[frame].down && velocity > 0)
+		{
+			velocity -= engineForce * 0.4f * 0.005 * dt;
+			if (velocity < 0)
+			{
+				velocity = 0;
+			}
+		}
+		if (gameStates[frame].up) {
+			velocity -= engineForce * 0.005 * dt;
+		}
+		else if (!gameStates[frame].up && velocity < 0)
+		{
+			velocity += engineForce * 0.4f * 0.005 * dt;
+			if (velocity > 0)
+			{
+				velocity = 0;
+			}
+		}
+		if (gameStates[frame].right) {
+			if (velocity != 0)
+				velocidadRotacion -= 2 * dt;
+		}
+		else if (!gameStates[frame].right && velocidadRotacion < 0) {
+			velocidadRotacion = 0.f;
+		}
+		if (gameStates[frame].left) {
+			if (velocity != 0)
+				velocidadRotacion += 2 * dt;
+		}
+		else if (!gameStates[frame].left && velocidadRotacion > 0) {
+			velocidadRotacion = 0.f;
+		}
+		frame++;
+	}
+
+	std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", "
+		<< models[1]->getMeshes()[0]->getPosition().y << ", " << models[1]->getMeshes()[0]->getPosition().z << ")" << std::endl;
+
+	if (velocity >= maxVelocity) {
+		velocity = maxVelocity;
+	}
+	else if (velocity <= -maxVelocity) {
+		velocity = -maxVelocity;
+	}
+
+	if (velocidadRotacion >= velocidadRotacionMaxima) {
+		velocidadRotacion = velocidadRotacionMaxima;
+	}
+	else if (velocidadRotacion <= -velocidadRotacionMaxima) {
+		velocidadRotacion = -velocidadRotacionMaxima;
+	}
+
+	// Aplica la rotación
+	if (velocidadRotacion != 0.f) {
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion, glm::vec3(0, 1, 0)); // * dt
+	}
+
+	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+	glm::vec3 movement = forwardDirection * (float(velocity));
+	models[1]->getMeshes()[0]->move(movement); // * dt
+
+	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
+	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
+
+	glm::vec3 cameraOffset, newCameraPosition, backwardDirection;
+	if (camera.getType() == 0) { //THIRD
+		backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		cameraOffset = backwardDirection * -2.f;
+		cameraOffset.y += 1.f;
+		newCameraPosition = modelPosition + cameraOffset;
+
+		camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+	}
+	else { //FIRST
+		forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+		cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+		newCameraPosition = modelPosition + cameraOffset;
+		camera.setFront(forwardDirection);
+	}
+
+	camera.setPosition(newCameraPosition);
+
+}
+
+void Game::saveGameStates() {
+	std::ofstream outFile("gamestates.txt", std::ios::app);
+
+	if (outFile.is_open()) {
+		boost::archive::text_oarchive oa(outFile);
+		oa << gameStates;
+		outFile.close();
+	}
+	else {
+		std::cerr << "Unable to open file!" << std::endl;
+	}
+}
+
+void Game::clearFile(const std::string& filename) {
+	std::ofstream outFile(filename, std::ios::trunc);
+
+	if (outFile.is_open()) {
+		outFile.close();
+		std::cout << "File '" << filename << "' cleared." << std::endl;
+	}
+	else {
+		std::cerr << "Unable to open file '" << filename << "'!" << std::endl;
+	}
+}
+
+void Game::loadGameStates() {
+	std::ifstream inFile("gamestates.txt");
+
+	if (inFile.is_open()) {
+		try {
+			boost::archive::text_iarchive ia(inFile);
+			ia >> gameStates;
+			inFile.close();
+			std::cout << "Game states loaded successfully. Size: " << gameStates.size() << std::endl;
+		}
+		catch (const boost::archive::archive_exception& e) {
+			std::cerr << "Exception during deserialization: " << e.what() << std::endl;
+		}
+		catch (const std::exception& ex) {
+			std::cerr << "Exception: " << ex.what() << std::endl;
+		}
+	}
+	else {
+		std::cerr << "Unable to open file!" << std::endl;
+	}
 }
 
 void Game::renderPlay()
@@ -930,8 +1409,14 @@ void Game::renderPlay()
 // ViewMode ======================================================
 // ===============================================================
  
-void Game::updateView()
+void Game::updateViewCams()
 {
+	//Program
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		reset();
+	}
 
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
@@ -1041,6 +1526,42 @@ void Game::renderView()
 	glUseProgram(0);
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Game::reset() {
+	if (startGame != 0)
+		startGame = 0;
+
+	// parar el coche
+	velocity = 0.0f;
+	velocidadRotacion = 0.0f;
+	dt = 0.0f;
+	curTime = 0.0f;
+	lastTime = 0.0f;
+
+	// moverlo al inicio
+	models[1]->getMeshes()[0]->setPosition(glm::vec3(-85.f, floor + 0.25, -60.f));
+	models[1]->getMeshes()[0]->setRotation(glm::quat(1.f, 0.f, 0.f, 0.f));
+	models[1]->getMeshes()[0]->rotate(90, glm::vec3(0, 1, 0));
+	// chrono a 0
+	startTimeStatus = false;
+	startTime2Status = false;
+	flag1 = false;
+	flag2 = false;
+
+	checkpointsPassed = 0;
+	aux = 0;
+	lap = 1;
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Game::startRaceTimer() {
+	startTime = std::chrono::steady_clock::now();
+}
+
+void Game::startCountdownTimer() {
+	startTime2 = std::chrono::steady_clock::now();
 }
 
 

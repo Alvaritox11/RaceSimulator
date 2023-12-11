@@ -30,15 +30,17 @@ private:
 	double floor = -5.0f;
 
 	double velocity = 0.0f;
-	double maxVelocity = 20.0f;
+	double maxVelocity = 0.2f;
 	
-	float velocidadRotacionMaxima = 50.f;
+	float velocidadRotacionMaxima = 1.f;
 	float velocidadRotacion = 0.0f;
 
 	//Delta time
 	float dt;
 	float curTime;
 	float lastTime;
+	/*using clock = std::chrono::steady_clock;
+	std::chrono::time_point<clock> start, end;*/
 
 	//Mouse Input
 	double lastMouseX;
@@ -49,7 +51,11 @@ private:
 	double mouseOffsetY;
 	bool firstMouse;
 
+	//Mode
+	int startGame = 0;
+
 	//PlayMode
+	bool flag = false;
 	int playCam;
 
 	//ImGui Fonts
@@ -72,6 +78,11 @@ private:
 	float nearPlane;
 	float farPlane;
 
+	//Checkpoints
+	int checkpointsPassed = 0;
+	int aux = 0;
+	int lap = 1;
+
 	//Shaders
 	std::vector<Shader*> shaders;
 
@@ -90,6 +101,9 @@ private:
 	//Lights
 	std::vector<PointLight*> pointLights;
 
+	//Checkpoints
+	std::vector<Checkpoint*> checkpoints;
+
 	//Private functions
 	//Inits
 	void initGLFW();
@@ -106,6 +120,7 @@ private:
 	void initLights();
 	void initUniforms();
 	void initImGui();
+	void initCheckpoints();
 	
 	void drawLoadingScreen(const char* loadingMessage);
 	void updateUniforms();
@@ -119,17 +134,29 @@ public:
 		bool resizable
 	);
 
+	// Partida Time
+	std::chrono::steady_clock::time_point startTime;
+	bool startTimeStatus = false;
+	std::chrono::steady_clock::time_point startTime2;
+	bool startTime2Status = false;
+	bool flag1 = false,	flag2 = false;
+
+	//States
+	std::vector<GameState> gameStates;
+
 	virtual ~Game();
 
 	//Accessors
 	int getWindowShouldClose();
 	GLFWwindow* getWindow() { return window; }
+	int getStartGame() { return startGame; }
 
 	//Modifiers
 	void setWindowShouldClose();
 
 	//ImGui
 	int menuPrincipal();
+	void UIPlay();
 	
 	//Functions
 	void updateDt();
@@ -140,14 +167,26 @@ public:
 	//PlayMode
 	void velocityUI();
 	void timeUI();
+	void mapUI();
+	void positionUI();
 	void updatePlay();
 	void renderPlay();
-	void mapUI();
+	void lapUI();
+	void countDownUI(bool &flag);
+	void startingUI();
+	void reset();
+	void startRaceTimer();
+	void startCountdownTimer();
+	void saveGameStates();
+	
 
 	//ViewMode
 	void menuCams();
+	void loadGameStates();
+	void updateViewCams();
 	void updateView();
 	void renderView();
+	void clearFile(const std::string& filename);
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

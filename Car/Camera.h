@@ -35,7 +35,7 @@ private:
 	GLfloat yaw;
 	GLfloat roll;
 
-	int typeCam;
+	int typeCam = 0;
 	std::vector<glm::vec3> cameraPositions = {
 		glm::vec3(199.0f, 30.0f, -55.0f),  // PANORAMICA
 		glm::vec3(162.5f, -2.0f, -65.0f),  // CAMERA_1
@@ -130,7 +130,7 @@ public:
 			this->updateCameraVectorsForThirdPerson();
 		}
 		else if (typeCam == FIRST) { 
-		
+			this->updateCameraVectorsForThirdPerson();
 		}
 		else if (typeCam == PANORAMICA) {
 			this->updateCameraVectorsForPanoramica();
