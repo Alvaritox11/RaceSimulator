@@ -123,6 +123,9 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/car_icon2.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/blue.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/preview.jpg", GL_TEXTURE_2D));
+
+	// BACKGROUND
+	this->textures.push_back(new Texture("images/backMenu.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -220,7 +223,8 @@ void Game::initImGui()
 	font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF(".\\fonts\\race.ttf", 60.0f);
 	font3 = io.Fonts->AddFontFromFileTTF(".\\fonts\\velocity.ttf", 20.0f);
-	font4 = io.Fonts->AddFontFromFileTTF(".\\fonts\\race.ttf", 50.0f);
+	font4 = io.Fonts->AddFontFromFileTTF(".\\fonts\\airstrike.ttf", 50.0f);
+
 
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
@@ -319,7 +323,7 @@ void Game::drawLoadingScreen(const char* loadingMessage)
 
 	ImGui::Begin("Loading", nullptr, flags);
 
-	ImGui::PushFont(font2);
+	ImGui::PushFont(font4);
 	const char* title = "LOADING...";
 	ImVec2 textSize = ImGui::CalcTextSize(title);
 	ImGui::SetCursorPosX((window_size.x - textSize.x) * 0.5f);
@@ -454,12 +458,13 @@ int Game::menuPrincipal()
 		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoBackground;
+		ImGuiWindowFlags_NoCollapse /*|
+		ImGuiWindowFlags_NoBackground*/;
 
-	ImVec2 window_size = ImVec2(1000.0f, 600.0f);
-	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-	ImVec2 window_pos = ImVec2(center.x - window_size.x * 0.5f, center.y - window_size.y * 0.5f);
+	ImVec2 screen_size = ImGui::GetIO().DisplaySize;
+
+	ImVec2 window_size = screen_size;
+	ImVec2 window_pos = ImVec2(0, 0);
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -470,21 +475,37 @@ int Game::menuPrincipal()
 
 	ImGui::Begin("Ventana ImGui", nullptr, flags);
 
-	ImGui::PushFont(font2);
+	GLuint background_texture = this->textures[12]->getID();
+	ImVec2 uv_min = ImVec2(0.0f, 0.0f);
+	ImVec2 uv_max = ImVec2(1.0f, 1.0f);
+	ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)background_texture, window_pos, ImVec2(window_pos.x + window_size.x, window_pos.y + window_size.y), uv_min, uv_max);
+
+	ImGui::PushFont(font4);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 	const char* title = "RACE SIMULATOR!";
 	ImVec2 textSize = ImGui::CalcTextSize(title);
+	ImGui::SetCursorPosY((window_size.y - textSize.y) * 0.2f); // Posición vertical ajustada
 	ImGui::SetCursorPosX((window_size.x - textSize.x) * 0.5f);
 	ImGui::Text("%s", title);
+	ImGui::PopStyleColor();
 	ImGui::PopFont();
 
-	ImGui::Dummy(ImVec2(0.0f, 40.0f));
+	ImGui::Dummy(ImVec2(0.0f, 30.0f));
 	float buttonWidth = 400.0f;
+	float buttonHeight = 40.0f;
+	float buttonRounding = 12.0f;
+
+	ImGuiStyle& backupStyle = ImGui::GetStyle();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, buttonRounding);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, .8f);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("START RACE", ImVec2(buttonWidth, 50))) {
 		startGame = 1;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
 	}
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
@@ -493,9 +514,19 @@ int Game::menuPrincipal()
 	}
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
+	if (ImGui::Button("INFORMATION", ImVec2(buttonWidth, 50))) {
+
+	}
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("EXIT", ImVec2(buttonWidth, 50))) {
 		glfwSetWindowShouldClose(window, true);
 	}
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar(2);
+	ImGui::GetStyle() = backupStyle;
+
 	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -511,69 +542,136 @@ void Game::menuCams()
 		ImGuiWindowFlags_AlwaysAutoResize |
 		ImGuiWindowFlags_NoSavedSettings |
 		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse;
+		ImGuiWindowFlags_NoCollapse /*| 
+		ImGuiWindowFlags_NoBackground*/;
 
 	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
 
-	// Menú de la izquierda centrado y más pequeño
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImVec2 windowSizeLeft = ImVec2(130.0f, 350.0f); // Tamaño ajustado para la ventana de la izquierda
-	ImVec2 windowPosLeft = ImVec2(30.0f, 110.f); // Centrada en el lado izquierdo
+	// VENTANA PARTICIPANTES
 
-	float buttonWidth = 140.0f;  // Ancho del botón en píxeles
-	float buttonHeight = 50.0f;  // Alto del botón en píxeles
+	ImVec2 windowSizeLeft = ImVec2(170.0f, 390.0f);
+	ImVec2 windowPosLeft = ImVec2(30.0f, 110.f);
+
+	float buttonWidth = 70.0f;  
+	float buttonHeight = 50.0f; 
+	float buttonRounding = 12.0f;
 
 	ImGui::SetNextWindowPos(windowPosLeft, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeLeft, ImGuiCond_Always);
 	ImGui::Begin("Participants", nullptr, flags);
-	ImGui::Text("Participants");
-	ImGui::SeparatorText("Escull:");
 
-	// Cinco botones con nombres de colores
-	const char* button_labels[] = { "Rojo", "Verde", "Azul", "Amarillo", "Morado" };
+	float backup = font4->Scale;
+	font4->Scale = 0.3;
+	ImGuiStyle& backupStyle = ImGui::GetStyle();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, buttonRounding);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 	for (int i = 0; i < 5; ++i) {
-		if (ImGui::Button(button_labels[i], ImVec2(buttonWidth, buttonHeight))) {
+		ImGui::PushFont(font4);
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
+		ImGui::Text("PLAYER %d", i + 1);
+		ImGui::PopStyleColor();
+		ImGui::PopFont();
+
+		if (ImGui::Button("1st", ImVec2(buttonWidth, buttonHeight))) {
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("3rd", ImVec2(buttonWidth, buttonHeight))) {
 
 		}
 	}
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar(2);
+	ImGui::GetStyle() = backupStyle;
 	ImGui::End();
 
-	// Ventana "Participante X" en la esquina superior izquierda
-	ImVec2 windowSizeTopLeft = ImVec2(155.0f, 50.0f); // Tamaño para la ventana "Participante X"
-	ImVec2 windowPosTopLeft = ImVec2(30.0f, 40.0f); // Posición para la ventana "Participante X"
+	// VENTANA PANO Y AUTO
+
+	ImVec2 windowSizeTopLeft = ImVec2(220.0f, 50.0f);
+	ImVec2 windowPosTopLeft = ImVec2(30.f, 40.0f);
 
 	ImGui::SetNextWindowPos(windowPosTopLeft, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeTopLeft, ImGuiCond_Always);
-	ImGui::Begin("Camara", nullptr, flags);
-	int cam = camera.getType() - 1;
-	if (cam >= 2 && cam <= 14) {
-		ImGui::Text("CAMERA %d", cam);
+	ImGui::Begin("Pano y Auto", nullptr, flags);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, buttonRounding);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+	if (ImGui::Button("Panoramica", ImVec2(100.f, 40.f)))
+		camera.setType(0);
+	ImGui::SameLine();
+	if (ImGui::Button("Automatica", ImVec2(100.f, 40.f))) {
+		std::cout << "Hola" << std::endl;
 	}
-	else {
-		ImGui::Text("PARTICIPANT %d", cam);
-	}
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar(2);
 	ImGui::End();
 
-	// Menú de abajo con trece botones
-	ImVec2 windowSizeBottom = ImVec2(970.f, 60.0f); // Ancho ajustado para acomodar 13 botones
-	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); // Posición centrada para el menú de abajo
+	// VENTANA CAMARA ESCOGIDA
+
+	ImVec2 windowSizeTopRight = ImVec2(220.0f, 50.0f); 
+	ImVec2 windowPosTopRight = ImVec2(screenSize.x - windowSizeTopLeft.x - 30.f, 40.0f);
+
+	ImGui::SetNextWindowPos(windowPosTopRight, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSizeTopRight, ImGuiCond_Always);
+	ImGui::Begin("Camara", nullptr, flags);
+
+	ImGui::PushFont(font4);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
+
+	ImGui::Text("You are visualizing:");
+	int cam = camera.getType() - 1;
+	if (cam >= 2 && cam <= 14) {
+		ImGui::Text("     CAMERA %d", cam);
+	}
+	else {
+		ImGui::Text("     PLAYER %d", cam);
+	}
+	ImGui::PopStyleColor();
+	ImGui::PopFont();	
+	ImGui::End();
+
+	// VENTANA CAMARAS
+
+	ImVec2 windowSizeBottom = ImVec2(980.f, 100.0f); 
+	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 
 
 	ImGui::SetNextWindowPos(windowPosBottom, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeBottom, ImGuiCond_Always);
 	ImGui::Begin("Cameras Circuit", nullptr, flags);
-	// Trece botones para seleccionar cámaras
+
+	ImGui::PushFont(font4);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
+	ImGui::SeparatorText("CAMERES CIRCUIT");
+	ImGui::PopStyleColor();
+	ImGui::PopFont();
+	//ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, buttonRounding);
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
 	for (int i = 0; i < 13; ++i) {
 		char buf[32];
-		sprintf_s(buf, "Cámara %d", i + 1);
-		if (ImGui::Button(buf, ImVec2(windowSizeBottom.x / 13 - ImGui::GetStyle().ItemSpacing.x, 50.f))) {
+		sprintf_s(buf, "%d", i + 1);
+		if (ImGui::Button(buf, ImVec2(65.f, 50.f))) {
 			camera.setType(i + 2);
 		}
 		if (i < 12) ImGui::SameLine();
 	}
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar();
 	ImGui::End();
+	font4->Scale = backup;
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -770,42 +868,6 @@ void Game::timeUI()
 	ImGui::EndFrame();
 }
 
-void Game::positionUI()
-{
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoDecoration |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoBackground;
-
-	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
-
-	// Configuración de la ventana ImGui
-	const ImVec2 window_pos = ImVec2(150.f, 50.f);
-	const ImVec2 window_size = ImVec2(0, 0);  // El tamaño se ajusta automáticamente basado en el contenido
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
-	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
-
-	ImGui::Begin("Position", nullptr, flags);
-	ImGui::PushFont(font3);
-
-	ImGui::Text("1ero");
-
-	ImGui::PopFont();
-	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	ImGui::EndFrame();
-}
-
 void Game::lapUI()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
@@ -893,59 +955,6 @@ void Game::countDownUI(bool &flag)
 	ImGui::EndFrame();
 }
 
-void Game::startingUI()
-{
-	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoDecoration |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoCollapse  |
-		ImGuiWindowFlags_NoBackground;
-
-	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
-	const ImVec2 window_size = ImVec2(300, 400);
-	const ImVec2 window_pos = ImVec2((screenSize.x + window_size.x) * 0.5f, (screenSize.y + window_size.y) * 0.5f);
-
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(1.0f, 1.0f));
-	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
-
-	ImGui::Begin("Time", nullptr, flags);
-	ImGui::PushFont(font4);
-
-	const char* title = "START";
-	ImVec2 textSize = ImGui::CalcTextSize(title);
-	ImGui::SetCursorPosX((window_size.x - textSize.x) * 0.5f);
-	ImGui::Text(title);
-
-	ImGui::PopFont();
-	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	ImGui::EndFrame();
-}
-
-void Game::UIPlay()
-{
-	if (!flag)
-		this->countDownUI(flag);
-	else if (flag) {
-		static auto count = 500;
-		if (count > 0)
-			this->startingUI();
-		count--;
-		this->velocityUI();
-		this->timeUI();
-		this->lapUI();
-		//positionUI();
-		this->mapUI();
-	}
-}
 
 // ===============================================================
 // Functions =====================================================
@@ -1155,9 +1164,9 @@ int frame = 0;
 void Game::updatePlay()
 {
 
-	//std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", " 
-		//<< models[1]->getMeshes()[0]->getPosition().y << ", " << models[1]->getMeshes()[0]->getPosition().z << ")" << std::endl;
-
+	/*std::cout << "Coordenadas: (" << camera.getPosition().x << ", " 
+		<< camera.getPosition().y << ", " << camera.getPosition().z << ")" << std::endl;
+	std::cout << "Yaw: " << camera.getYaw() << std::endl;*/
 	//UPDATE INPUT ---
 	this->updateDt();
 	this->updateInput();
@@ -1490,12 +1499,12 @@ void Game::updateViewCams()
 	case CAMERA_7:
 		camera.setType(CAMERA_7);
 		cameraPos = camera.getCameraPosition(CAMERA_7 - 2);
-		camera.setYaw(-55.f);
+		camera.setYaw(-72.f);
 		break;
 	case CAMERA_8:
 		camera.setType(CAMERA_8);
 		cameraPos = camera.getCameraPosition(CAMERA_8 - 2);
-		camera.setYaw(180.f);
+		camera.setYaw(0.f);
 		break;
 	case CAMERA_9:
 		camera.setType(CAMERA_9);
@@ -1505,17 +1514,17 @@ void Game::updateViewCams()
 	case CAMERA_10:
 		camera.setType(CAMERA_10);
 		cameraPos = camera.getCameraPosition(CAMERA_10 - 2);
-		camera.setYaw(-80.f);
+		camera.setYaw(250.f);
 		break;
 	case CAMERA_11:
 		camera.setType(CAMERA_11);
 		cameraPos = camera.getCameraPosition(CAMERA_11 - 2);
-		camera.setYaw(-10.f);
+		camera.setYaw(70.f);
 		break;
 	case CAMERA_12:
 		camera.setType(CAMERA_12);
 		cameraPos = camera.getCameraPosition(CAMERA_12 - 2);
-		camera.setYaw(70.f);
+		camera.setYaw(158.f);
 		break;
 	case PANORAMICA:
 	default:

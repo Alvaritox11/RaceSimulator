@@ -127,7 +127,7 @@ std::string getCurrentDateTime() {
 int main(void)
 {
     Game game("Racing Game",
-        1280, 720,
+        1920, 1080,
         3, 3,
         false);
 
@@ -149,7 +149,6 @@ int main(void)
 
         
         if (game.getStartGame() == 1) {
-            // Renderiza el coche un instante y no lo vuelve a hacer
             if (!game.flag2) {
                 game.updatePlay();
                 game.flag2 = true;

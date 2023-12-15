@@ -47,9 +47,9 @@ private:
 		glm::vec3(17.0f, -2.0f, 60.0f),    // CAMERA_7
 		glm::vec3(-110.0f, -2.0f, 17.5f),  // CAMERA_8
 		glm::vec3(-190.0f, -2.0f, -28.0f), // CAMERA_9
-		glm::vec3(144.0f, -2.0f, 68.0f),   // CAMERA_10
-		glm::vec3(-233.0f, -2.0f, 42.0f),  // CAMERA_11
-		glm::vec3(-216.5f, -2.0f, -61.5f)  // CAMERA_12
+		glm::vec3(-139.0f, -2.0f, 64.0f),   // CAMERA_10
+		glm::vec3(-216.5f, -2.0f, -61.5f),  // CAMERA_11
+		glm::vec3(-61.0f, -2.0f, -66.0f)  // CAMERA_12 //arreglar
 	};
 
 
@@ -194,7 +194,7 @@ public:
 		return cameraPositions[position];
 	}
 	void setYaw(GLfloat newYaw) { this->yaw = newYaw; }
-
+	GLfloat getYaw() { return yaw; }
 	void setPitch(GLfloat newPitch) { this->pitch = newPitch; }
 
 

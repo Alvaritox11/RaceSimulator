@@ -1,10 +1,12 @@
 ﻿  Game.cpp
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(38,70): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(39,68): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(66,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(38,31): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1198,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1322,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1452,12): warning C4101: 'cameraFront': unreferenced local variable
-     Creating library D:\Sistem\Users\deivvvid\source\repos\Car\x64\Debug\Car.lib and object D:\Sistem\Users\deivvvid\source\repos\Car\x64\Debug\Car.exp
-  Car.vcxproj -> D:\Sistem\Users\deivvvid\source\repos\Car\x64\Debug\Car.exe
+E:\UNI\RaceSimulator\Car\Primitives.h(38,70): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Primitives.h(39,68): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Model.h(66,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.h(38,31): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
+E:\UNI\RaceSimulator\Car\Game.cpp(568,17): warning C4305: '=': truncamiento de 'double' a 'float'
+E:\UNI\RaceSimulator\Car\Game.cpp(1207,21): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(1331,21): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(1461,12): warning C4101: 'cameraFront': variable local sin referencia
+  Car.vcxproj -> E:\UNI\RaceSimulator\x64\Debug\Car.exe
+  "pwsh.exe" no se reconoce como un comando interno o externo,
+  programa o archivo por lotes ejecutable.

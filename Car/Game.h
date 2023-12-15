@@ -162,7 +162,6 @@ public:
 
 	//ImGui
 	int menuPrincipal();
-	void UIPlay();
 	
 	//Functions
 	void updateDt();
@@ -174,12 +173,10 @@ public:
 	void velocityUI();
 	void timeUI();
 	void mapUI();
-	void positionUI();
 	void updatePlay();
 	void renderPlay();
 	void lapUI();
 	void countDownUI(bool &flag);
-	void startingUI();
 	void reset();
 	void startRaceTimer();
 	void startCountdownTimer();
