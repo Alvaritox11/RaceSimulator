@@ -1002,6 +1002,12 @@ void Game::updateKeyboardInput()
 		reset();
 
 	}
+	if (velocity < 0) {
+		velocity -= friction_coefficient * velocity * dt;
+	}
+	else if (velocity > 0) {
+		velocity += friction_coefficient * velocity * dt;
+	}
 	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
 		velocity += engineForce * 0.005 * dt;
 	}
@@ -1027,8 +1033,10 @@ void Game::updateKeyboardInput()
 
 	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		// Girar a la derecha
-		if (velocity != 0)
-			velocidadRotacion -= 2 * dt;
+		if (velocity != 0) {
+			float velocityAbs = std::abs(velocity) / 0.04f;
+			velocidadRotacion = -0.6 * std::min(velocityAbs, 1.0f);
+		}
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_RIGHT) != GLFW_PRESS && velocidadRotacion < 0) {
 		// Girar a la izquierda
@@ -1036,14 +1044,16 @@ void Game::updateKeyboardInput()
 	}
 	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		// Girar a la izquierda
-		if (velocity != 0)
-			velocidadRotacion += 2 * dt;
+		if (velocity != 0) {
+			float velocityAbs = std::abs(velocity) / 0.04f;
+			velocidadRotacion = 0.6 * std::min(velocityAbs, 1.0f);
+		}
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_LEFT) != GLFW_PRESS && velocidadRotacion > 0) {
 		// Girar a la izquierda
 		velocidadRotacion = 0.f;
 	}
-
+	std::cout << velocity << std::endl;
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (camera.getType() != 1)
 			camera.setType(1);
@@ -1155,19 +1165,19 @@ void Game::updatePlay()
 	//camera.setType(0); //THIRD
 
 	//velocity += acceleration;
-	if (velocity >= maxVelocity) {
-		velocity = maxVelocity;
+	if (velocity >= maxVelocity / 2) {
+		velocity = maxVelocity / 2;
 	}
 	else if (velocity <= -maxVelocity) {
 		velocity = -maxVelocity;
 	}
 
-	if (velocidadRotacion >= velocidadRotacionMaxima) {
+	/*if (velocidadRotacion >= velocidadRotacionMaxima) {
 		velocidadRotacion = velocidadRotacionMaxima;
 	}
 	else if (velocidadRotacion <= -velocidadRotacionMaxima) {
 		velocidadRotacion = -velocidadRotacionMaxima;
-	}
+	}*/
 
 	if (startTimeStatus) {
 		gameStates.push_back(GameState(dt, 
@@ -1186,12 +1196,12 @@ void Game::updatePlay()
 
 	// Aplica la rotación
 	if (velocidadRotacion != 0.f) {
-		models[1]->getMeshes()[0]->rotate(velocidadRotacion, glm::vec3(0, 1, 0)); // * dt
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
 	}
 
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
 	glm::vec3 movement = forwardDirection * (float(velocity));
-	models[1]->getMeshes()[0]->move(movement); // * dt
+	models[1]->getMeshes()[0]->move(movement * 250.f * dt); // * dt
 
 	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
 	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
@@ -1241,6 +1251,12 @@ void Game::updateView()
 		std::cout << gameStates[frame].dt << gameStates[frame].up << gameStates[frame].down << gameStates[frame].right << gameStates[frame].left << std::endl;
 		//this->updateDt();
 		dt = gameStates[frame].dt;
+		if (velocity < 0) {
+			velocity -= friction_coefficient * velocity * dt;
+		}
+		else if (velocity > 0) {
+			velocity += friction_coefficient * velocity * dt;
+		}
 		if (gameStates[frame].down) {
 			velocity += engineForce * 0.005 * dt;
 		}
@@ -1264,15 +1280,19 @@ void Game::updateView()
 			}
 		}
 		if (gameStates[frame].right) {
-			if (velocity != 0)
-				velocidadRotacion -= 2 * dt;
+			if (velocity != 0) {
+				float velocityAbs = std::abs(velocity) / 0.04f;
+				velocidadRotacion = -0.6 * std::min(velocityAbs, 1.0f);
+			}
 		}
 		else if (!gameStates[frame].right && velocidadRotacion < 0) {
 			velocidadRotacion = 0.f;
 		}
 		if (gameStates[frame].left) {
-			if (velocity != 0)
-				velocidadRotacion += 2 * dt;
+			if (velocity != 0) {
+				float velocityAbs = std::abs(velocity) / 0.04f;
+				velocidadRotacion = 0.6 * std::min(velocityAbs, 1.0f);
+			}
 		}
 		else if (!gameStates[frame].left && velocidadRotacion > 0) {
 			velocidadRotacion = 0.f;
@@ -1283,28 +1303,28 @@ void Game::updateView()
 	std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", "
 		<< models[1]->getMeshes()[0]->getPosition().y << ", " << models[1]->getMeshes()[0]->getPosition().z << ")" << std::endl;
 
-	if (velocity >= maxVelocity) {
-		velocity = maxVelocity;
+	if (velocity >= maxVelocity / 2) {
+		velocity =  maxVelocity / 2;
 	}
 	else if (velocity <= -maxVelocity) {
 		velocity = -maxVelocity;
 	}
 
-	if (velocidadRotacion >= velocidadRotacionMaxima) {
+	/*if (velocidadRotacion >= velocidadRotacionMaxima) {
 		velocidadRotacion = velocidadRotacionMaxima;
 	}
 	else if (velocidadRotacion <= -velocidadRotacionMaxima) {
 		velocidadRotacion = -velocidadRotacionMaxima;
-	}
+	}*/
 
 	// Aplica la rotación
 	if (velocidadRotacion != 0.f) {
-		models[1]->getMeshes()[0]->rotate(velocidadRotacion, glm::vec3(0, 1, 0)); // * dt
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
 	}
 
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
 	glm::vec3 movement = forwardDirection * (float(velocity));
-	models[1]->getMeshes()[0]->move(movement); // * dt
+	models[1]->getMeshes()[0]->move(movement * 250.f * dt); // * dt
 
 	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
 	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();

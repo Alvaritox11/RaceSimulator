@@ -108,6 +108,22 @@ void fpsCounter(GLFWwindow* window) {
     }
 }
 
+std::string getCurrentDateTime() {
+    const int bufferSize = 80; // Size of the buffer to hold the date and time
+    char buffer[bufferSize]; // Buffer to store the formatted date and time
+
+    // Get current time
+    std::time_t currentTime = std::time(nullptr);
+
+    struct tm timeInfo;
+    localtime_s(&timeInfo, &currentTime);
+
+    // Format the time into a string
+    std::strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S.txt", &timeInfo);
+
+    return std::string(buffer);
+}
+
 int main(void)
 {
     Game game("Racing Game",
@@ -151,6 +167,7 @@ int main(void)
             else if (game.flag1) {
                 fpsCounter(game.getWindow());
                 if (!game.startTimeStatus) {
+                    game.saveFile = getCurrentDateTime();
 					game.startRaceTimer();
                     game.gameStates.clear();
                     game.clearFile("gamestates.txt");

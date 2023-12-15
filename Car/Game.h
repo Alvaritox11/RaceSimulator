@@ -35,6 +35,8 @@ private:
 	float velocidadRotacionMaxima = 1.f;
 	float velocidadRotacion = 0.0f;
 
+	float friction_coefficient = 0.15;
+
 	//Delta time
 	float dt;
 	float curTime;
@@ -140,6 +142,9 @@ public:
 	std::chrono::steady_clock::time_point startTime2;
 	bool startTime2Status = false;
 	bool flag1 = false,	flag2 = false;
+
+	// Files
+	std::string saveFile = "default.txt";
 
 	//States
 	std::vector<GameState> gameStates;
