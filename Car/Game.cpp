@@ -1034,8 +1034,8 @@ void Game::updateKeyboardInput()
 	if (glfwGetKey(this->window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 		// Girar a la derecha
 		if (velocity != 0) {
-			float velocityAbs = std::abs(velocity) / 0.04f;
-			velocidadRotacion = -0.6 * std::min(velocityAbs, 1.0f);
+			velocidadRotacion -= 0.2f * std::min(abs(velocidadRotacion / 0.65f) + 0.05f, 1.f) * dt * 144.f;
+			velocidadRotacion = -1.f * std::min(abs(velocidadRotacion), 0.65f);
 		}
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_RIGHT) != GLFW_PRESS && velocidadRotacion < 0) {
@@ -1045,15 +1045,15 @@ void Game::updateKeyboardInput()
 	if (glfwGetKey(this->window, GLFW_KEY_LEFT) == GLFW_PRESS) {
 		// Girar a la izquierda
 		if (velocity != 0) {
-			float velocityAbs = std::abs(velocity) / 0.04f;
-			velocidadRotacion = 0.6 * std::min(velocityAbs, 1.0f);
+			velocidadRotacion += 0.2f * std::min(abs(velocidadRotacion / 0.65f) + 0.05f, 1.f) * dt * 144.f;
+			velocidadRotacion = std::min(velocidadRotacion, 0.65f);
 		}
 	}
 	else if (glfwGetKey(this->window, GLFW_KEY_LEFT) != GLFW_PRESS && velocidadRotacion > 0) {
 		// Girar a la izquierda
 		velocidadRotacion = 0.f;
 	}
-	std::cout << velocity << std::endl;
+
 	if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (camera.getType() != 1)
 			camera.setType(1);
@@ -1192,11 +1192,11 @@ void Game::updatePlay()
 	}
 
 	frame++;
-	std::cout << frame << std::endl;
 
 	// Aplica la rotación
 	if (velocidadRotacion != 0.f) {
-		models[1]->getMeshes()[0]->rotate(velocidadRotacion * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
+		float velocityAbs = std::abs(velocity) / 0.04f;
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion * std::min(velocityAbs, 1.0f) * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
 	}
 
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
@@ -1281,8 +1281,8 @@ void Game::updateView()
 		}
 		if (gameStates[frame].right) {
 			if (velocity != 0) {
-				float velocityAbs = std::abs(velocity) / 0.04f;
-				velocidadRotacion = -0.6 * std::min(velocityAbs, 1.0f);
+				velocidadRotacion -= 0.2f * std::min(abs(velocidadRotacion / 0.65f) + 0.05f, 1.f) * dt * 144.f;
+				velocidadRotacion = -1.f * std::min(abs(velocidadRotacion), 0.65f);
 			}
 		}
 		else if (!gameStates[frame].right && velocidadRotacion < 0) {
@@ -1290,8 +1290,8 @@ void Game::updateView()
 		}
 		if (gameStates[frame].left) {
 			if (velocity != 0) {
-				float velocityAbs = std::abs(velocity) / 0.04f;
-				velocidadRotacion = 0.6 * std::min(velocityAbs, 1.0f);
+				velocidadRotacion += 0.2f * std::min(abs(velocidadRotacion / 0.65f) + 0.05f, 1.f) * dt * 144.f;
+				velocidadRotacion = std::min(velocidadRotacion, 0.65f);
 			}
 		}
 		else if (!gameStates[frame].left && velocidadRotacion > 0) {
@@ -1319,7 +1319,8 @@ void Game::updateView()
 
 	// Aplica la rotación
 	if (velocidadRotacion != 0.f) {
-		models[1]->getMeshes()[0]->rotate(velocidadRotacion * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
+		float velocityAbs = std::abs(velocity) / 0.04f;
+		models[1]->getMeshes()[0]->rotate(velocidadRotacion * std::min(velocityAbs, 1.0f) * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
 	}
 
 	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
@@ -1350,7 +1351,16 @@ void Game::updateView()
 }
 
 void Game::saveGameStates() {
-	std::ofstream outFile("gamestates.txt", std::ios::app);
+	std::string filename = saveFile;
+	std::cout << filename << std::endl;
+
+	// Check if the file exists
+	if (!boost::filesystem::exists(filename)) {
+		std::ofstream createFile(filename);
+		createFile.close();
+	}
+
+	std::ofstream outFile(filename, std::ios::app);
 
 	if (outFile.is_open()) {
 		boost::archive::text_oarchive oa(outFile);
@@ -1375,7 +1385,7 @@ void Game::clearFile(const std::string& filename) {
 }
 
 void Game::loadGameStates() {
-	std::ifstream inFile("gamestates.txt");
+	std::ifstream inFile("gamestates_2023_12_15_084627.txt");
 
 	if (inFile.is_open()) {
 		try {

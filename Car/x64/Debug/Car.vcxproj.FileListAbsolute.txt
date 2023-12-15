@@ -1,2 +1,3 @@
 C:\Users\alvar\Desktop\RaceSimulator\Car\x64\Debug\Car.vcxproj.CopyComplete
 C:\Users\alvar\Documents\ING INFORMATICA\3º ING INFORMATICA\VGI\RaceSimulator\Car\x64\Debug\Car.vcxproj.CopyComplete
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\x64\Debug\Car.vcxproj.CopyComplete

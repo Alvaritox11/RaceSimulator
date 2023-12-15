@@ -119,7 +119,7 @@ std::string getCurrentDateTime() {
     localtime_s(&timeInfo, &currentTime);
 
     // Format the time into a string
-    std::strftime(buffer, bufferSize, "%Y-%m-%d %H:%M:%S.txt", &timeInfo);
+    std::strftime(buffer, bufferSize, "gamestates_%Y_%m_%d_%H%M%S.txt", &timeInfo);
 
     return std::string(buffer);
 }
@@ -170,7 +170,10 @@ int main(void)
                     game.saveFile = getCurrentDateTime();
 					game.startRaceTimer();
                     game.gameStates.clear();
-                    game.clearFile("gamestates.txt");
+                    game.dt = 0.0f;
+                    game.curTime = 0.0f;
+                    game.lastTime = 0.0f;
+                    //game.clearFile("gamestates.txt");
 					game.startTimeStatus = true;
 				}
                 game.updatePlay();

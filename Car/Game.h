@@ -37,10 +37,6 @@ private:
 
 	float friction_coefficient = 0.15;
 
-	//Delta time
-	float dt;
-	float curTime;
-	float lastTime;
 	/*using clock = std::chrono::steady_clock;
 	std::chrono::time_point<clock> start, end;*/
 
@@ -148,6 +144,11 @@ public:
 
 	//States
 	std::vector<GameState> gameStates;
+
+	//Delta time
+	float dt;
+	float curTime;
+	float lastTime;
 
 	virtual ~Game();
 
