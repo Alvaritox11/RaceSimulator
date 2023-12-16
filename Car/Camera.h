@@ -13,8 +13,9 @@
 enum direction { FORWARD = 0, BACKWARD, LEFT, RIGHT, UP, DOWN, TURN_LEFT, TURN_RIGHT };
 
 enum cameras { THIRD = 0, FIRST, PANORAMICA, CAMERA_1, CAMERA_2, CAMERA_3, CAMERA_4, CAMERA_5,
-	CAMERA_6, CAMERA_7, CAMERA_8, CAMERA_9, CAMERA_10, CAMERA_11, CAMERA_12 };
+	CAMERA_6, CAMERA_7, CAMERA_8, CAMERA_9, CAMERA_10, CAMERA_11, CAMERA_12, PLAYER };
 
+enum players { PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4, PLAYER_5 };
 
 class Camera
 {
@@ -35,7 +36,11 @@ private:
 	GLfloat yaw;
 	GLfloat roll;
 
-	int typeCam = 0;
+	int typeCam = THIRD;
+	int playerSelected = 0;
+	int camPlayer = 0; // 0 FIRST, 1 THIRD
+	int flagPlayer = 0; // 0 NoSelected, 1 Selected
+
 	std::vector<glm::vec3> cameraPositions = {
 		glm::vec3(199.0f, 30.0f, -55.0f),  // PANORAMICA
 		glm::vec3(162.5f, -2.0f, -65.0f),  // CAMERA_1
@@ -113,7 +118,7 @@ public:
 		this->yaw = 90.f;
 		this->roll = 0.f;
 
-		this->typeCam = THIRD;
+		//this->typeCam = THIRD;
 
 		this->updateCameraVectors();
 	}
@@ -126,13 +131,13 @@ public:
 
 	const glm::mat4 getViewMatrix()
 	{
-		if (typeCam == THIRD) {
+		if (typeCam == THIRD || (flagPlayer == 1 && camPlayer == 1)) {
 			this->updateCameraVectorsForThirdPerson();
 		}
-		else if (typeCam == FIRST) { 
+		else if (typeCam == FIRST || (flagPlayer == 1 && camPlayer == 0)) {
 			this->updateCameraVectorsForThirdPerson();
 		}
-		else if (typeCam == PANORAMICA) {
+		else if (typeCam == PANORAMICA && flagPlayer == 0) {
 			this->updateCameraVectorsForPanoramica();
 		}
 		else {
@@ -154,49 +159,24 @@ public:
 
 	void setPosition(const glm::vec3& newPosition) {
 		this->position = newPosition;
-
-		/*if (typeCam == THIRD) {
-			this->updateCameraVectorsForThirdPerson();
-		}
-		else if (typeCam == FIRST) {
-
-		}
-		else if (typeCam == PANORAMICA) {
-			this->updateCameraVectorsForPanoramica();
-		}
-		else {
-			this->updateCameraVectorsForCircuitCameras();
-		}*/
-		//this->updateCameraVectors();
 	}
-
 	void setFront(const glm::vec3& newFront) {
 		this->front = glm::normalize(newFront);
-
-		/*if (typeCam == THIRD) {
-			this->updateCameraVectorsForThirdPerson();
-		}
-		else if (typeCam == FIRST) {
-
-		}
-		else if (typeCam == PANORAMICA) {
-			this->updateCameraVectorsForPanoramica();
-		}
-		else {
-			this->updateCameraVectorsForCircuitCameras();
-		}*/
-		//this->updateCameraVectors();
 	}
 
 	void setType(int type) { this->typeCam = type; }
 	int getType() { return typeCam; }
-	glm::vec3 getCameraPosition(int position) {
-		return cameraPositions[position];
-	}
+	glm::vec3 getCameraPosition(int position) {	return cameraPositions[position]; }
+	int getPlayer() { return playerSelected; }
+	int getFlagPlayer() { return flagPlayer; }
+	int getCamPlayer() { return camPlayer; }
+
 	void setYaw(GLfloat newYaw) { this->yaw = newYaw; }
 	GLfloat getYaw() { return yaw; }
 	void setPitch(GLfloat newPitch) { this->pitch = newPitch; }
-
+	void setPlayer(int player) { playerSelected = player; }
+	void setFlagPlayer(int flag) { flagPlayer = flag; }
+	void setCamPlayer(int cam) { camPlayer = cam; }
 
 	// ================================================================
 	// Functions ======================================================

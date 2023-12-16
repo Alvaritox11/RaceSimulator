@@ -127,9 +127,9 @@ std::string getCurrentDateTime() {
 int main(void)
 {
     Game game("Racing Game",
-        1920, 1080,
+        1280, 720,
         3, 3,
-        false);
+        true);
 
     game.loadGameStates();
 

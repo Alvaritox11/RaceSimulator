@@ -190,6 +190,9 @@ public:
 	void updateView();
 	void renderView();
 	void clearFile(const std::string& filename);
+	void camerasPlayers(int player, int typeCam);
+	void camerasCircuit(int typeCam);
+	void specialCams(int typeCam);
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

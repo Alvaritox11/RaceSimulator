@@ -505,12 +505,14 @@ int Game::menuPrincipal()
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("START RACE", ImVec2(buttonWidth, 50))) {
 		startGame = 1;
+		camera.setType(THIRD);
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("START VIEW", ImVec2(buttonWidth, 50))) {
 		startGame = 2;
+		camera.setType(PANORAMICA);
 	}
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
@@ -580,11 +582,15 @@ void Game::menuCams()
 		ImGui::PopFont();
 
 		if (ImGui::Button("1st", ImVec2(buttonWidth, buttonHeight))) {
-
+			camera.setCamPlayer(1);
+			camera.setFlagPlayer(1);
+			camera.setPlayer(i);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("3rd", ImVec2(buttonWidth, buttonHeight))) {
-
+			camera.setCamPlayer(0);
+			camera.setFlagPlayer(1);
+			camera.setPlayer(i);
 		}
 	}
 
@@ -606,8 +612,10 @@ void Game::menuCams()
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-	if (ImGui::Button("Panoramica", ImVec2(100.f, 40.f)))
-		camera.setType(0);
+	if (ImGui::Button("Panoramica", ImVec2(100.f, 40.f))) {
+		camera.setType(2);
+		camera.setFlagPlayer(0);
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("Automatica", ImVec2(100.f, 40.f))) {
 		std::cout << "Hola" << std::endl;
@@ -643,7 +651,7 @@ void Game::menuCams()
 
 	// VENTANA CAMARAS
 
-	ImVec2 windowSizeBottom = ImVec2(980.f, 100.0f); 
+	ImVec2 windowSizeBottom = ImVec2(950.f, 100.0f); 
 	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 
 
 	ImGui::SetNextWindowPos(windowPosBottom, ImGuiCond_Always);
@@ -659,13 +667,14 @@ void Game::menuCams()
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
-	for (int i = 0; i < 13; ++i) {
+	for (int i = 0; i < 12; ++i) {
 		char buf[32];
 		sprintf_s(buf, "%d", i + 1);
 		if (ImGui::Button(buf, ImVec2(65.f, 50.f))) {
-			camera.setType(i + 2);
+			camera.setType(i + 3);
+			camera.setFlagPlayer(0);
 		}
-		if (i < 12) ImGui::SameLine();
+		if (i < 11) ImGui::SameLine();
 	}
 
 	ImGui::PopStyleColor();
@@ -1244,7 +1253,7 @@ void Game::updatePlay()
 			lap++;
 	}
 
-	if (lap == 2)
+	if (lap == 4)
 	{
 		saveGameStates();
 		gameStates.clear();
@@ -1394,7 +1403,7 @@ void Game::clearFile(const std::string& filename) {
 }
 
 void Game::loadGameStates() {
-	std::ifstream inFile("gamestates_2023_12_15_084627.txt");
+	std::ifstream inFile("gamestates_2023_12_16_160654.txt");
 
 	if (inFile.is_open()) {
 		try {
@@ -1447,24 +1456,61 @@ void Game::renderPlay()
 // ===============================================================
 // ViewMode ======================================================
 // ===============================================================
- 
-void Game::updateViewCams()
+
+void Game::camerasPlayers(int player, int typeCam)
 {
-	//Program
-	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	glm::vec3 cameraPos;
+	glm::vec3 cameraOffset, newCameraPosition, backwardDirection;
+	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
+	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
+
+
+	switch (player)
 	{
-		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
-		reset();
+	case PLAYER_1:
+		if (typeCam == 0) { //THIRD
+			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			cameraOffset = backwardDirection * -2.f;
+			cameraOffset.y += 1.f;
+			newCameraPosition = modelPosition + cameraOffset;
+
+			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+		}
+		if (typeCam == 1) { //FIRST
+			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+			newCameraPosition = modelPosition + cameraOffset;
+			camera.setFront(forwardDirection);
+		}
+		break;
+	case PLAYER_2:
+		cameraPos = camera.getCameraPosition(CAMERA_2 - 2);
+		camera.setYaw(-90.f);
+		break;
+	case PLAYER_3:
+		cameraPos = camera.getCameraPosition(CAMERA_3 - 2);
+		camera.setYaw(-80.f);
+		break;
+	case PLAYER_4:
+		cameraPos = camera.getCameraPosition(CAMERA_4 - 2);
+		camera.setYaw(-25.f);
+		break;
+	case PLAYER_5:
+		cameraPos = camera.getCameraPosition(CAMERA_5 - 2);
+		camera.setYaw(170.f);
+		break;
 	}
 
+	camera.setPosition(newCameraPosition);
+}
+
+void Game::camerasCircuit(int typeCam)
+{
 	glm::vec3 cameraPos;
-	glm::vec3 cameraFront;
-
 	camera.setPitch(-10.f);
-	float inclinacion = 80.f;
-	float radianes = glm::radians(inclinacion);
 
-	switch (camera.getType())
+	switch (typeCam)
 	{
 	case CAMERA_1:
 		camera.setType(CAMERA_1);
@@ -1526,8 +1572,19 @@ void Game::updateViewCams()
 		cameraPos = camera.getCameraPosition(CAMERA_12 - 2);
 		camera.setYaw(158.f);
 		break;
-	case PANORAMICA:
 	default:
+		break;
+	}
+
+	camera.setPosition(cameraPos);
+}
+
+void Game::specialCams(int typeCam)
+{
+	glm::vec3 cameraPos;
+	switch (typeCam)
+	{
+	case PANORAMICA:
 		camera.setType(PANORAMICA);
 		cameraPos = camera.getCameraPosition(PANORAMICA - 2);
 		camera.setYaw(150.f);
@@ -1535,7 +1592,36 @@ void Game::updateViewCams()
 		break;
 	}
 
-	camera.setPosition(cameraPos);
+	camera.setPosition(cameraPos); 
+}
+
+void Game::updateViewCams()
+{
+	//Program
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		reset();
+	}
+
+	glm::vec3 cameraPos;
+	glm::vec3 cameraFront;
+
+	int typeCam = camera.getType();
+	int playerCam = camera.getFlagPlayer();
+
+
+	if (playerCam == 1) //PLAYER
+	{
+		camerasPlayers(camera.getPlayer(), camera.getCamPlayer());
+	}
+	else if (typeCam >= 3 && typeCam <= 14 && playerCam == 0) //CAMERAS CIRCUIT
+	{
+		camerasCircuit(typeCam);
+	}
+	else {
+		specialCams(typeCam);
+	}
 }
 
 void Game::renderView()
