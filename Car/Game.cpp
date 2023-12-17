@@ -123,33 +123,6 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/car_icon2.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/blue.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/preview.jpg", GL_TEXTURE_2D));
-
-	// BACKGROUND
-	this->textures.push_back(new Texture("images/backMenu.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("models/blue.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("models/yellow.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("models/green.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("models/purple.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp1.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp2.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp3.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp4.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp5.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp6.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp7.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp8.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp9.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp10.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp11.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp12.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp13.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp14.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp15.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp16.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp17.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp18.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp19.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/cp20.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -670,6 +643,9 @@ void Game::menuCams()
 	ImVec2 windowSizeTopLeft = ImVec2(220.0f, 50.0f);
 	ImVec2 windowPosTopLeft = ImVec2(30.f, 40.0f);
 
+	ImVec2 windowSizeTopLeft = ImVec2(220.0f, 50.0f);
+	ImVec2 windowPosTopLeft = ImVec2(30.f, 40.0f);
+
 	ImGui::SetNextWindowPos(windowPosTopLeft, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeTopLeft, ImGuiCond_Always);
 	ImGui::Begin("Pano y Auto", nullptr, flags);
@@ -716,6 +692,9 @@ void Game::menuCams()
 	ImGui::End();
 
 	// VENTANA CAMARAS
+
+	ImVec2 windowSizeBottom = ImVec2(950.f, 100.0f); 
+	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 
 
 	ImVec2 windowSizeBottom = ImVec2(950.f, 100.0f); 
 	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 

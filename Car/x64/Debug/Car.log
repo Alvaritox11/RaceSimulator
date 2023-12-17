@@ -1,12 +1,114 @@
-﻿  Game.cpp
+﻿  Checkpoint.h
 D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(38,70): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
 D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(39,68): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
 D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(66,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
 D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(91,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+  Game.cpp
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(38,70): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(39,68): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(66,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(91,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(178,1): error C2059: syntax error: '<<'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(179,35): error C2238: unexpected token(s) preceding ';'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(180,1): error C2059: syntax error: '=='
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(181,19): error C2238: unexpected token(s) preceding ';'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(182,1): error C2059: syntax error: '>>'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(182,9): error C2177: constant too big
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(183,19): error C2238: unexpected token(s) preceding ';'
 D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(39,31): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(636,17): warning C4305: '=': truncation from 'double' to 'float'
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1280,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1404,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1653,12): warning C4101: 'cameraFront': unreferenced local variable
-D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1652,12): warning C4101: 'cameraPos': unreferenced local variable
-  Car.vcxproj -> D:\Sistem\Users\deivvvid\source\repos\Car\x64\Debug\Car.exe
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(609,17): warning C4305: '=': truncation from 'double' to 'float'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(646,9): error C2374: 'windowSizeTopLeft': redefinition; multiple initialization
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(643,9): message : see declaration of 'windowSizeTopLeft'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(647,9): error C2374: 'windowPosTopLeft': redefinition; multiple initialization
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(644,9): message : see declaration of 'windowPosTopLeft'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(699,9): error C2374: 'windowSizeBottom': redefinition; multiple initialization
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(696,9): message : see declaration of 'windowSizeBottom'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(700,9): error C2374: 'windowPosBottom': redefinition; multiple initialization
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(697,9): message : see declaration of 'windowPosBottom'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1218,12): error C2039: 'updatePlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1225,2): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1226,2): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1231,6): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1231,21): error C2065: 'maxVelocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1232,3): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1232,17): error C2065: 'maxVelocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1234,11): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1234,27): error C2065: 'maxVelocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1235,3): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1235,18): error C2065: 'maxVelocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1245,6): error C2065: 'startTimeStatus': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1246,3): error C2065: 'gameStates': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1246,34): error C2065: 'dt': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1247,15): error C2065: 'window': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1248,15): error C2065: 'window': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1249,15): error C2065: 'window': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1250,15): error C2065: 'window': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1258,6): error C2065: 'velocidadRotacion': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1259,32): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1260,3): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1260,48): error C2065: 'velocidadRotacion': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1260,109): error C2065: 'dt': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1263,43): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1263,36): error C2672: 'glm::rotate': no matching overloaded function found
+D:\Sistem\Users\deivvvid\Desktop\vcpkg\installed\x64-windows\include\glm\gtx\quaternion.hpp(98,29): message : could be 'glm::vec<4,T,Q> glm::rotate(const glm::qua<T,Q> &,const glm::vec<4,T,Q> &)'
+D:\Sistem\Users\deivvvid\Desktop\vcpkg\installed\x64-windows\include\glm\gtx\quaternion.hpp(90,29): message : or       'glm::vec<3,T,Q> glm::rotate(const glm::qua<T,Q> &,const glm::vec<3,T,Q> &)'
+D:\Sistem\Users\deivvvid\Desktop\vcpkg\installed\x64-windows\include\glm\ext\quaternion_transform.hpp(43,26): message : or       'glm::qua<T,Q> glm::rotate(const glm::qua<T,Q> &,const T &,const glm::vec<3,T,Q> &)'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1263,36): message : 'glm::qua<T,Q> glm::rotate(const glm::qua<T,Q> &,const T &,const glm::vec<3,T,Q> &)': expects 3 arguments - 2 provided
+D:\Sistem\Users\deivvvid\Desktop\vcpkg\installed\x64-windows\include\glm\ext\matrix_transform.hpp(80,32): message : or       'glm::mat<4,4,T,Q> glm::rotate(const glm::mat<4,4,T,Q> &,T,const glm::vec<3,T,Q> &)'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1263,36): message : 'glm::mat<4,4,T,Q> glm::rotate(const glm::mat<4,4,T,Q> &,T,const glm::vec<3,T,Q> &)': expects 3 arguments - 2 provided
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1264,49): error C2065: 'velocity': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1265,2): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1265,64): error C2065: 'dt': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1267,28): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1268,28): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1271,6): error C2065: 'camera': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1277,3): error C2065: 'camera': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1283,3): error C2065: 'camera': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1286,2): error C2065: 'camera': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1289,25): error C2065: 'checkpoints': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1289,37): error C2065: 'aux': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1290,23): error C2065: 'models': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1291,3): error C2065: 'aux': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1292,3): error C2065: 'checkpointsPassed': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1293,7): error C2065: 'aux': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1294,4): error C2065: 'aux': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1295,7): error C2065: 'checkpointsPassed': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1296,4): error C2065: 'lap': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1299,6): error C2065: 'lap': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1301,3): error C3861: 'saveGameStates': identifier not found
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1302,3): error C2065: 'gameStates': undeclared identifier
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1303,3): error C3861: 'reset': identifier not found
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1383,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1451,12): error C2039: 'renderPlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1462,2): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1465,17): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1465,2): error C2530: 'i': references must be initialized
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1465,2): error C3531: 'i': a symbol whose type contains 'auto' must have an initializer
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1465,15): error C2143: syntax error: missing ';' before ':'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1465,29): error C2143: syntax error: missing ';' before ')'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.cpp(1466,13): error C2355: 'this': can only be referenced inside non-static member functions or non-static data member initializers
+  main.cpp
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(38,70): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Primitives.h(39,68): warning C4267: 'return': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(66,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Model.h(91,57): warning C4267: 'argument': conversion from 'size_t' to 'const unsigned int', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(178,1): error C2059: syntax error: '<<'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(179,35): error C2238: unexpected token(s) preceding ';'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(180,1): error C2059: syntax error: '=='
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(181,19): error C2238: unexpected token(s) preceding ';'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(182,1): error C2059: syntax error: '>>'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(182,9): error C2177: constant too big
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(183,19): error C2238: unexpected token(s) preceding ';'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(167,44): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(190,22): error C2039: 'updatePlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(199,22): error C2039: 'renderPlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(210,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(219,26): error C2039: 'updatePlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\main.cpp(229,22): error C2039: 'renderPlay': is not a member of 'Game'
+D:\Sistem\Users\deivvvid\source\repos\Car\Car\Game.h(13,7): message : see declaration of 'Game'
+  Generating Code...

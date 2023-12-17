@@ -1,0 +1,2 @@
+Si le das a las teclas antes de que acabe el contador se va.
+Si sales del view y vuelves a entrar empieza desde el inicio pero del archivo desde donde lo dejo.
