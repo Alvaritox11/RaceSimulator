@@ -29,11 +29,12 @@ private:
 	double engineForce = 10.0f;
 	double floor = -5.0f;
 
-	double velocity = 0.0f;
+	double velocity[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+
 	double maxVelocity = 0.2f;
 	
 	float velocidadRotacionMaxima = 1.f;
-	float velocidadRotacion = 0.0f;
+	float velocidadRotacion[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
 	float friction_coefficient = 0.15;
 
@@ -143,8 +144,9 @@ public:
 	std::string saveFile = "default.txt";
 
 	//States
+	std::vector<std::vector<GameState>> carStates;
 	std::vector<GameState> gameStates;
-
+	
 	//Delta time
 	float dt;
 	float curTime;
@@ -162,7 +164,6 @@ public:
 
 	//ImGui
 	int menuPrincipal();
-	void UIPlay();
 	
 	//Functions
 	void updateDt();
@@ -174,12 +175,10 @@ public:
 	void velocityUI();
 	void timeUI();
 	void mapUI();
-	void positionUI();
-	void updatePlay();
+	void updatePlay(int model_number);
 	void renderPlay();
 	void lapUI();
 	void countDownUI(bool &flag);
-	void startingUI();
 	void reset();
 	void startRaceTimer();
 	void startCountdownTimer();
@@ -188,11 +187,14 @@ public:
 
 	//ViewMode
 	void menuCams();
-	void loadGameStates();
+	void loadGameStates(std::string filename);
 	void updateViewCams();
-	void updateView();
+	void updateView(int carStates_number, int car_number);
 	void renderView();
 	void clearFile(const std::string& filename);
+	void camerasPlayers(int player, int typeCam);
+	void camerasCircuit(int typeCam);
+	void specialCams(int typeCam);
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

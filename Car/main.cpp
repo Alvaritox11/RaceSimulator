@@ -124,34 +124,70 @@ std::string getCurrentDateTime() {
     return std::string(buffer);
 }
 
+const double FIXED_TIMESTEP = 16.7; // in milliseconds
+
+auto currentTime = std::chrono::steady_clock::now();
+auto accumulator = 0.0;
+
 int main(void)
 {
     Game game("Racing Game",
         1280, 720,
         3, 3,
-        false);
+        true);
 
-    game.loadGameStates();
+    game.loadGameStates("red_npc.txt");
+    game.loadGameStates("blue_npc.txt");
+    game.loadGameStates("yellow_npc.txt");
+    game.loadGameStates("green_npc.txt");
+    game.loadGameStates("purple_npc.txt");
 
     std::cout << game.gameStates.size() << std::endl;
 
+    static double limitFPS = 1.0 / 60.0;
+
+    double lastTime = glfwGetTime(), timer = lastTime;
+    double deltaTime = 0, nowTime = 0;
+    int frames = 0, updates = 0;
+
     while (!game.getWindowShouldClose()) {
+        fpsCounter(game.getWindow());
         // UPDATE INPUT
         //std::cout << "Estado de juego: " << startGame << std::endl;
+        auto currentTime = std::chrono::steady_clock::now();
+
+        nowTime = glfwGetTime();
+        deltaTime += (nowTime - lastTime) / limitFPS;
+        lastTime = nowTime;
 
         if (game.getStartGame() == 2) {
-            fpsCounter(game.getWindow());
-            game.updateView();
-            game.updateViewCams();
+            if (!game.startTimeStatus) {
+                game.dt = 0.0f;
+                game.curTime = 0.0f;
+                game.lastTime = glfwGetTime();
+                nowTime = glfwGetTime();
+                deltaTime = 0;
+                lastTime = nowTime;
+                game.startTimeStatus = true;
+            }
+            while (deltaTime >= 1.0) {
+                game.updateView(0, 1);
+                game.updateView(1, 3);
+                game.updateView(2, 4);
+                game.updateView(3, 5);
+                game.updateView(4, 6);
+                game.updateViewCams();   // - Update function
+                updates++;
+                deltaTime--;
+            }
             game.renderView();
             game.menuCams();
         }
 
         
         if (game.getStartGame() == 1) {
-            // Renderiza el coche un instante y no lo vuelve a hacer
             if (!game.flag2) {
-                game.updatePlay();
+                game.updatePlay(1);
                 game.flag2 = true;
             }
             // Cuenta atras
@@ -165,18 +201,30 @@ int main(void)
             }
             // Empieza el juego
             else if (game.flag1) {
-                fpsCounter(game.getWindow());
                 if (!game.startTimeStatus) {
                     game.saveFile = getCurrentDateTime();
 					game.startRaceTimer();
                     game.gameStates.clear();
                     game.dt = 0.0f;
                     game.curTime = 0.0f;
-                    game.lastTime = 0.0f;
+                    game.lastTime = glfwGetTime();
                     //game.clearFile("gamestates.txt");
+                    nowTime = glfwGetTime();
+                    deltaTime = 0;
+                    lastTime = nowTime;
+                    std::cout << updates << std::endl;
 					game.startTimeStatus = true;
 				}
-                game.updatePlay();
+                while (deltaTime >= 1.0) {
+                    game.updatePlay(1);
+                    game.updateView(1, 3);
+                    game.updateView(2, 4);
+                    game.updateView(3, 5);
+                    game.updateView(4, 6);
+                    updates++;
+                    deltaTime--;
+                }
+                //game.updatePlay();
                 //game.updateView();
                 game.renderPlay();
                 game.velocityUI();
@@ -192,6 +240,16 @@ int main(void)
 
         glfwSwapBuffers(game.getWindow());
         glfwPollEvents();
+        //std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+        frames++;
+
+        // - Reset after one second
+        if (glfwGetTime() - timer > 1.0) {
+            timer++;
+            std::cout << "FPS: " << frames << " Updates:" << updates << std::endl;
+            updates = 0, frames = 0;
+        }
     }
 
     ImGui_ImplOpenGL3_Shutdown();
