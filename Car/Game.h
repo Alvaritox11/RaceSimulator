@@ -103,6 +103,14 @@ private:
 	//Checkpoints
 	std::vector<Checkpoint*> checkpoints;
 
+	// HAY QUE INICIALIZARLOS DE ALGUNA FORMA Y PONER EL PRIMERO EN DEFAULT SIEMPRE
+	//Replays
+	int selectedReplayIndex = -1;
+	std::vector<std::string> replayNames = { "Hola" , "David", "Aqui", "Los", "Replays", "Xd",
+											"aedds", "sdaa", "sda", "dsada", "asdasd", "adsada",
+											"sdad", "asdadas", "asdadas"};
+	
+	
 	//Private functions
 	//Inits
 	void initGLFW();
@@ -164,7 +172,9 @@ public:
 
 	//ImGui
 	int menuPrincipal();
-	
+	void menuInformation();
+	void replaySelector();
+
 	//Functions
 	void updateDt();
 	void updateMouseInput();
@@ -195,6 +205,7 @@ public:
 	void camerasPlayers(int player, int typeCam);
 	void camerasCircuit(int typeCam);
 	void specialCams(int typeCam);
+	void cameraAutomatic();
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);

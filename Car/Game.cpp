@@ -152,6 +152,7 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/cp19.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/cp20.png", GL_TEXTURE_2D));
 
+	this->textures.push_back(new Texture("images/controles.png", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -449,6 +450,7 @@ Game::Game(
 	this->mouseOffsetY = 0.0;
 	this->firstMouse = true;
 
+	
 	// Initialize GLFW and the window
 	this->initGLFW();
 	this->initWindow(title, resizable);
@@ -549,7 +551,7 @@ int Game::menuPrincipal()
 	ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)background_texture, window_pos, ImVec2(window_pos.x + window_size.x, window_pos.y + window_size.y), uv_min, uv_max);
 
 	ImGui::PushFont(font4);
-	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
 
 	const char* title = "RACE SIMULATOR!";
 	ImVec2 textSize = ImGui::CalcTextSize(title);
@@ -585,7 +587,12 @@ int Game::menuPrincipal()
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
 	if (ImGui::Button("INFORMATION", ImVec2(buttonWidth, 50))) {
-
+		startGame = 3;
+	}
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
+	if (ImGui::Button("REPLAY SELECTOR", ImVec2(buttonWidth, 50))) {
+		startGame = 4;
 	}
 	ImGui::Dummy(ImVec2(0.0f, 10.0f));
 	ImGui::SetCursorPosX((window_size.x - buttonWidth) * 0.5f);
@@ -603,6 +610,178 @@ int Game::menuPrincipal()
 
 	return startGame;
 
+}
+
+void Game::menuInformation() {
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Program
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		reset();
+	}
+
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse /*|
+		ImGuiWindowFlags_NoBackground*/;
+
+	ImVec2 screen_size = ImGui::GetIO().DisplaySize;
+
+	ImVec2 window_size = screen_size;
+	ImVec2 window_pos = ImVec2(0, 0);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Ventana ImGui", nullptr, flags);
+
+	GLuint background_texture = this->textures[12]->getID();
+	ImVec2 uv_min = ImVec2(0.0f, 0.0f);
+	ImVec2 uv_max = ImVec2(1.0f, 1.0f);
+	ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)background_texture, window_pos, ImVec2(window_pos.x + window_size.x, window_pos.y + window_size.y), uv_min, uv_max);
+
+	ImGui::End();
+
+	ImVec2 windowSize = ImVec2(screen_size.x * 0.75, screen_size.y * 0.75);
+	ImVec2 windowPos = ImVec2((screen_size.x - windowSize.x) * 0.5f, (screen_size.y - windowSize.y) * 0.5f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	ImGui::Begin("Informations", nullptr, flags);
+
+
+	ImGui::SeparatorText("CONTROLES");
+
+	ImVec2 my_image_size = ImVec2(477, 294);
+	GLuint my_texture_id = this->textures[37]->getID();
+
+	ImVec2 pos = ImVec2(windowSize.x * 0.25, 50); // Posición x,y desde la esquina superior izquierda de la ventana
+	ImGui::SetCursorPos(pos);
+	ImGui::Image((void*)(intptr_t)my_texture_id, my_image_size);
+
+	ImGui::SeparatorText("FUNCIONALIDAD");
+	ImGui::Text("Race Mode: recrea una partida contra 4 jugadores fantasma. Pasa por los checkpoints marcados en el mini-mapa y no te saltes ninguno!");
+	ImGui::Text("La partida la ganara el que realice las 3 vueltas mas rapido. Cambia la camara a primera o tercera persona segun tu comodidad.");
+	ImGui::Text(" ");
+	ImGui::Text("View Mode: visualiza la partida escogida en el Replay Selector con diferentes puntos de vista. Hemos incluido camaras de los");
+	ImGui::Text("jugadores, situadas por el mapa, panoramica y, ademas, tendras la opcion de visualizar la carrera a partir de una camara");
+	ImGui::Text("automatica que detecta los coches cuando pasan por el circuito!");
+	ImGui::Text(" ");
+	ImGui::Text("Queremos darte la sensacion de conducir como si estuviera en el circuito de Montmelo y, a la vez, visualizarlo como espectador.");
+	ImGui::Text("Si te gusta la sensación de simuladores, bienvenido a RACE SIMULATOR!");
+
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+}
+
+void Game::replaySelector() 
+{
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Program
+	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		reset();
+	}
+
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_AlwaysAutoResize |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse /*|
+		ImGuiWindowFlags_NoBackground*/;
+
+	ImVec2 screen_size = ImGui::GetIO().DisplaySize;
+
+	ImVec2 window_size = screen_size;
+	ImVec2 window_pos = ImVec2(0, 0);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(window_size, ImGuiCond_Always);
+
+	ImGui::Begin("Ventana ImGui", nullptr, flags);
+
+	GLuint background_texture = this->textures[12]->getID();
+	ImVec2 uv_min = ImVec2(0.0f, 0.0f);
+	ImVec2 uv_max = ImVec2(1.0f, 1.0f);
+	ImGui::GetWindowDrawList()->AddImage((void*)(intptr_t)background_texture, window_pos, ImVec2(window_pos.x + window_size.x, window_pos.y + window_size.y), uv_min, uv_max);
+
+	ImGui::End();
+
+	ImVec2 windowSize = ImVec2(screen_size.x * 0.25, screen_size.y * 0.50);
+	ImVec2 windowPos = ImVec2((screen_size.x - windowSize.x) * 0.5f, (screen_size.y - windowSize.y) * 0.5f);
+
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	ImGui::Begin("Replays", nullptr, flags);
+
+	float backup = font4->Scale;
+	font4->Scale = 0.4;
+	ImGuiStyle& backupStyle = ImGui::GetStyle();
+
+	ImGui::PushFont(font4);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
+	ImGui::Text("REPLAY SELECTOR");
+	ImGui::PopStyleColor();
+	ImGui::PopFont();
+	ImGui::GetStyle() = backupStyle;
+	font4->Scale = backup;
+	ImGui::Spacing();
+	ImGui::Text("La partida seleccionada sera reproducida");
+	ImGui::Text("en el View Mode.");
+	ImGui::SeparatorText("Selecciona la partida");
+
+
+	ImGui::BeginChild("ScrollingRegion", ImVec2(0, windowSize.y - 120), true, ImGuiWindowFlags_HorizontalScrollbar);
+
+	// Establece el color de fondo para el hijo y el color de selección
+	ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(45, 45, 45, 255)); // Fondo oscuro
+	ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(100, 100, 100, 255)); // Fondo del ítem seleccionado
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(120, 120, 120, 255)); // Al pasar el ratón
+	ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(150, 150, 150, 255)); // Al hacer clic
+	for (size_t i = 0; i < replayNames.size(); ++i) {
+		bool isSelected = (i == selectedReplayIndex);
+		if (isSelected) 
+			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f)); 
+		if (ImGui::Selectable(replayNames[i].c_str(), isSelected)) 
+			selectedReplayIndex = i; 
+		if (isSelected) 
+			ImGui::PopStyleColor();
+	}
+	ImGui::PopStyleColor(4);
+	ImGui::EndChild();
+	if (selectedReplayIndex != -1) {
+		ImGui::Spacing();
+		ImGui::Text("Seleccionado: %s", replayNames[selectedReplayIndex].c_str());
+	}
+	else {
+		ImGui::Spacing();
+		ImGui::Text("Selecciona un replay de la lista");
+	}
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Game::menuCams()
@@ -690,7 +869,8 @@ void Game::menuCams()
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Automatica", ImVec2(100.f, 40.f))) {
-		std::cout << "Hola" << std::endl;
+		camera.setType(16);
+		camera.setFlagPlayer(0);
 	}
 
 	ImGui::PopStyleColor();
@@ -711,6 +891,9 @@ void Game::menuCams()
 
 	ImGui::Text("You are visualizing:");
 	int cam = camera.getType();
+	if (cam == 16) {
+		ImGui::Text("     AUTOMATIC");
+	}
 	if (cam == 2) {
 		ImGui::Text("     PANORAMICA");
 	}
@@ -1266,6 +1449,8 @@ void Game::updatePlay(int model_number)
 		velocity[0] = -maxVelocity;
 	}
 
+	std::cout << "AUX: " << aux << std::endl;
+
 	/*if (velocidadRotacion >= velocidadRotacionMaxima) {
 		velocidadRotacion = velocidadRotacionMaxima;
 	}
@@ -1695,6 +1880,76 @@ void Game::camerasCircuit(int typeCam)
 	}
 
 	camera.setPosition(cameraPos);
+
+
+}
+
+void Game::cameraAutomatic()
+{
+
+	//std::vector<int> checks = { 0,2,3,4,6,8,9,11,12,13,16,18 };
+
+	Checkpoint* actCheck = checkpoints[aux];
+	if (actCheck->passed(models[1]->getMeshes()[0]->getPosition())) {
+		aux++;
+		checkpointsPassed++;
+		if (aux == 20)
+			aux %= 20;
+		if (checkpointsPassed % 20 == 0)
+			lap++;
+	}
+
+	if (lap == 4) {
+		saveGameStates();
+		gameStates.clear();
+		reset();
+	}
+
+	switch (aux)
+	{
+	case 0:
+		camerasCircuit(CAMERA_1);
+		break;
+	case 1:
+		camerasCircuit(CAMERA_1);
+		break;
+	case 2:
+		camerasCircuit(CAMERA_2);
+		break;
+	case 3:
+		camerasCircuit(CAMERA_3);
+		break;
+	case 4:
+		camerasCircuit(CAMERA_4);
+		break;
+	case 6:
+		camerasCircuit(CAMERA_5);
+		break;
+	case 8:
+		camerasCircuit(CAMERA_6);
+		break;
+	case 9:
+		camerasCircuit(CAMERA_7);
+		break;
+	case 11:
+		camerasCircuit(CAMERA_8);
+		break;
+	case 12:
+		camerasCircuit(CAMERA_9);
+		break;
+	case 13:
+		camerasCircuit(CAMERA_10);
+		break;
+	case 16:
+		camerasCircuit(CAMERA_11);
+		break;
+	case 18:
+		camerasCircuit(CAMERA_12);
+		break;
+	}
+	
+	camera.setType(AUTOMATIC);
+
 }
 
 void Game::specialCams(int typeCam)
@@ -1707,10 +1962,15 @@ void Game::specialCams(int typeCam)
 		cameraPos = camera.getCameraPosition(PANORAMICA - 2);
 		camera.setYaw(150.f);
 		camera.setPitch(-30.f);
+		camera.setPosition(cameraPos);
+		break;
+	case AUTOMATIC:
+		camera.setType(AUTOMATIC);
+		cameraAutomatic();
 		break;
 	}
 
-	camera.setPosition(cameraPos); 
+	 
 }
 
 void Game::updateViewCams()
@@ -1722,6 +1982,7 @@ void Game::updateViewCams()
 		reset();
 	}
 
+	std::cout << "AUX: " << aux << std::endl;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 

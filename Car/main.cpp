@@ -131,7 +131,7 @@ auto accumulator = 0.0;
 
 int main(void)
 {
-    Game game("Racing Game",
+    Game game("Race Simulator",
         1280, 720,
         3, 3,
         true);
@@ -159,6 +159,14 @@ int main(void)
         nowTime = glfwGetTime();
         deltaTime += (nowTime - lastTime) / limitFPS;
         lastTime = nowTime;
+
+        if (game.getStartGame() == 4) {
+            game.replaySelector();
+        }
+
+        if (game.getStartGame() == 3) {
+            game.menuInformation();
+        }
 
         if (game.getStartGame() == 2) {
             if (!game.startTimeStatus) {
