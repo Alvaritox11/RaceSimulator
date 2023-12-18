@@ -123,6 +123,35 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/car_icon2.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/blue.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/preview.jpg", GL_TEXTURE_2D));
+
+	// BACKGROUND
+
+	this->textures.push_back(new Texture("images/backMenu.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("models/blue.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("models/yellow.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("models/green.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("models/purple.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp1.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp2.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp3.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp4.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp5.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp6.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp7.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp8.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp9.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp10.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp11.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp12.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp13.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp14.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp15.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp16.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp17.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp18.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp19.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/cp20.png", GL_TEXTURE_2D));
+
 }
 
 void Game::initMaterials()
@@ -620,16 +649,18 @@ void Game::menuCams()
 		ImGui::PopStyleColor();
 		ImGui::PopFont();
 
-		if (ImGui::Button("1st", ImVec2(buttonWidth, buttonHeight))) {
+		if (ImGui::Button(("1st##" + std::to_string(i)).c_str(), ImVec2(buttonWidth, buttonHeight))) {
 			camera.setCamPlayer(1);
 			camera.setFlagPlayer(1);
 			camera.setPlayer(i);
+			camera.setType(15);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("3rd", ImVec2(buttonWidth, buttonHeight))) {
+		if (ImGui::Button(("3rd##" + std::to_string(i)).c_str(), ImVec2(buttonWidth, buttonHeight))) {
 			camera.setCamPlayer(0);
 			camera.setFlagPlayer(1);
 			camera.setPlayer(i);
+			camera.setType(15);
 		}
 	}
 
@@ -643,8 +674,7 @@ void Game::menuCams()
 	ImVec2 windowSizeTopLeft = ImVec2(220.0f, 50.0f);
 	ImVec2 windowPosTopLeft = ImVec2(30.f, 40.0f);
 
-	ImVec2 windowSizeTopLeft = ImVec2(220.0f, 50.0f);
-	ImVec2 windowPosTopLeft = ImVec2(30.f, 40.0f);
+
 
 	ImGui::SetNextWindowPos(windowPosTopLeft, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeTopLeft, ImGuiCond_Always);
@@ -680,12 +710,15 @@ void Game::menuCams()
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(255.0f, 255.0f, 255.0f, 1.0f));
 
 	ImGui::Text("You are visualizing:");
-	int cam = camera.getType() - 1;
-	if (cam >= 2 && cam <= 14) {
-		ImGui::Text("     CAMERA %d", cam);
+	int cam = camera.getType();
+	if (cam == 2) {
+		ImGui::Text("     PANORAMICA");
 	}
-	else {
-		ImGui::Text("     PLAYER %d", cam);
+	else if (cam > 2 && cam < 15) {
+		ImGui::Text("     CAMERA %d", cam - 2);
+	}
+	else if (cam == 15) {
+		ImGui::Text("     PLAYER %d", camera.getPlayer() + 1);
 	}
 	ImGui::PopStyleColor();
 	ImGui::PopFont();	
@@ -693,11 +726,9 @@ void Game::menuCams()
 
 	// VENTANA CAMARAS
 
-	ImVec2 windowSizeBottom = ImVec2(950.f, 100.0f); 
+	ImVec2 windowSizeBottom = ImVec2(900.f, 100.0f); 
 	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 
 
-	ImVec2 windowSizeBottom = ImVec2(950.f, 100.0f); 
-	ImVec2 windowPosBottom = ImVec2((screenSize.x - windowSizeBottom.x) / 2, screenSize.y - 100.f); 
 
 	ImGui::SetNextWindowPos(windowPosBottom, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSizeBottom, ImGuiCond_Always);
@@ -1485,14 +1516,16 @@ void Game::camerasPlayers(int player, int typeCam)
 {
 	glm::vec3 cameraPos;
 	glm::vec3 cameraOffset, newCameraPosition, backwardDirection;
-	glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
-	glm::vec3 modelPosition = models[1]->getMeshes()[0]->getPosition();
-	glm::quat modelRotation = models[1]->getMeshes()[0]->getRotation();
+	
+	glm::vec3 modelPosition;
+	glm::quat modelRotation;
 
 
 	switch (player)
 	{
 	case PLAYER_1:
+		modelPosition = models[1]->getMeshes()[0]->getPosition();
+		modelRotation = models[1]->getMeshes()[0]->getRotation();
 		if (typeCam == 0) { //THIRD
 			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
 			cameraOffset = backwardDirection * -2.f;
@@ -1502,6 +1535,7 @@ void Game::camerasPlayers(int player, int typeCam)
 			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
 		}
 		if (typeCam == 1) { //FIRST
+			glm::vec3 forwardDirection = glm::rotate(models[1]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
 			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
 			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
 			newCameraPosition = modelPosition + cameraOffset;
@@ -1509,20 +1543,80 @@ void Game::camerasPlayers(int player, int typeCam)
 		}
 		break;
 	case PLAYER_2:
-		cameraPos = camera.getCameraPosition(CAMERA_2 - 2);
-		camera.setYaw(-90.f);
+		modelPosition = models[3]->getMeshes()[0]->getPosition();
+		modelRotation = models[3]->getMeshes()[0]->getRotation();
+		if (typeCam == 0) { //THIRD
+			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			cameraOffset = backwardDirection * -2.f;
+			cameraOffset.y += 1.f;
+			newCameraPosition = modelPosition + cameraOffset;
+
+			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+		}
+		if (typeCam == 1) { //FIRST
+			glm::vec3 forwardDirection = glm::rotate(models[3]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+			newCameraPosition = modelPosition + cameraOffset;
+			camera.setFront(forwardDirection);
+		}
 		break;
 	case PLAYER_3:
-		cameraPos = camera.getCameraPosition(CAMERA_3 - 2);
-		camera.setYaw(-80.f);
+		modelPosition = models[4]->getMeshes()[0]->getPosition();
+		modelRotation = models[4]->getMeshes()[0]->getRotation();
+		if (typeCam == 0) { //THIRD
+			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			cameraOffset = backwardDirection * -2.f;
+			cameraOffset.y += 1.f;
+			newCameraPosition = modelPosition + cameraOffset;
+
+			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+		}
+		if (typeCam == 1) { //FIRST
+			glm::vec3 forwardDirection = glm::rotate(models[4]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+			newCameraPosition = modelPosition + cameraOffset;
+			camera.setFront(forwardDirection);
+		}
 		break;
 	case PLAYER_4:
-		cameraPos = camera.getCameraPosition(CAMERA_4 - 2);
-		camera.setYaw(-25.f);
+		modelPosition = models[5]->getMeshes()[0]->getPosition();
+		modelRotation = models[5]->getMeshes()[0]->getRotation();
+		if (typeCam == 0) { //THIRD
+			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			cameraOffset = backwardDirection * -2.f;
+			cameraOffset.y += 1.f;
+			newCameraPosition = modelPosition + cameraOffset;
+
+			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+		}
+		if (typeCam == 1) { //FIRST
+			glm::vec3 forwardDirection = glm::rotate(models[5]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+			newCameraPosition = modelPosition + cameraOffset;
+			camera.setFront(forwardDirection);
+		}
 		break;
 	case PLAYER_5:
-		cameraPos = camera.getCameraPosition(CAMERA_5 - 2);
-		camera.setYaw(170.f);
+		modelPosition = models[6]->getMeshes()[0]->getPosition();
+		modelRotation = models[6]->getMeshes()[0]->getRotation();
+		if (typeCam == 0) { //THIRD
+			backwardDirection = glm::rotate(modelRotation, glm::vec3(0.0f, 0.0f, 1.0f));
+			cameraOffset = backwardDirection * -2.f;
+			cameraOffset.y += 1.f;
+			newCameraPosition = modelPosition + cameraOffset;
+
+			camera.setFront(glm::normalize(modelPosition - newCameraPosition));
+		}
+		if (typeCam == 1) { //FIRST
+			glm::vec3 forwardDirection = glm::rotate(models[6]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+			forwardDirection = glm::rotate(modelRotation, glm::vec3(0, 0, 1));
+			cameraOffset = glm::vec3(0.0f, 0.2f, 0.0f);
+			newCameraPosition = modelPosition + cameraOffset;
+			camera.setFront(forwardDirection);
+		}
 		break;
 	}
 
