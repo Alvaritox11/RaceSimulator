@@ -115,7 +115,7 @@ void Game::initTextures()
 
 	// TEXTURE 2
 	this->textures.push_back(new Texture("models/Model001_Material1.png", GL_TEXTURE_2D));
-	this->textures.push_back(new Texture("images/circuit_tex.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/circuit_tex.jpg", GL_TEXTURE_2D));
 
 	this->textures.push_back(new Texture("images/circuit.png", GL_TEXTURE_2D));
 	this->textures.push_back(new Texture("images/mask3.png", GL_TEXTURE_2D));
@@ -153,6 +153,9 @@ void Game::initTextures()
 	this->textures.push_back(new Texture("images/cp20.png", GL_TEXTURE_2D));
 
 	this->textures.push_back(new Texture("images/controles.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/meta.jpg", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/grada.png", GL_TEXTURE_2D));
+	this->textures.push_back(new Texture("images/rojo.jpg", GL_TEXTURE_2D));
 }
 
 void Game::initMaterials()
@@ -188,7 +191,7 @@ void Game::initModels()
 		this->materials[0],
 		this->textures[5],
 		this->textures[5],
-		"models/montmelo2v3.obj"
+		"models/montmelofinal.obj"
 	)
 	);
 
@@ -244,6 +247,33 @@ void Game::initModels()
 		this->textures[16],
 		this->textures[16],
 		mesh
+	)
+	);
+
+	this->models.push_back(new Model(
+		glm::vec3(2.f, floor, 2.f),
+		this->materials[2],
+		this->textures[38],
+		this->textures[38],
+		"models/meta.obj"
+	)
+	);
+
+	this->models.push_back(new Model(
+		glm::vec3(2.f, floor, 2.f),
+		this->materials[2],
+		this->textures[39],
+		this->textures[39],
+		"models/gradas.obj"
+	)
+	);
+
+	this->models.push_back(new Model(
+		glm::vec3(2.f, floor, 2.f),
+		this->materials[2],
+		this->textures[40],
+		this->textures[40],
+		"models/vallas.obj"
 	)
 	);
 
@@ -696,6 +726,10 @@ void Game::replaySelector()
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 	{
 		//glfwSetWindowShouldClose(this->window, GLFW_TRUE);
+		if (selectedReplayIndex >= 0 && replayNames.size() > selectedReplayIndex) {
+			std::string replayPath = "replays/" + replayNames[selectedReplayIndex];
+			loadGameStates(replayPath, 0);
+		}
 		reset();
 	}
 
@@ -960,7 +994,7 @@ void Game::velocityUI()
 	ImVec2 screenSize = ImGui::GetIO().DisplaySize;
 
 	char speedText[50];
-	snprintf(speedText, sizeof(speedText), "%.2f Km/h", this->velocity[0] * (-12));
+	snprintf(speedText, sizeof(speedText), "%.2f Km/h", abs(this->velocity[0] * (-12) * 100));
 
 	// Calcula el tamaño y la posición de la ventana basado en el tamaño de la pantalla y los márgenes deseados
 	const ImVec2 margin = ImVec2(40, 40);  // Margen de 40 píxeles por cada lado
@@ -1104,6 +1138,7 @@ void Game::timeUI()
 	// Convertir el tiempo a segundos y minutos
 	float timeInSeconds = elapsed.count();
 	int minutes = static_cast<int>(timeInSeconds / 60);
+	minutesPartida = minutes;
 	float seconds = timeInSeconds - (minutes * 60);
 
 	// Configuración de la ventana ImGui
@@ -1439,6 +1474,14 @@ void Game::updatePlay(int model_number)
 	this->updateDt();
 	this->updateInput();
 
+	if (minutesPartida >= 7)
+	{
+		saveGameStates();
+		gameStates.clear();
+		reset();
+
+	}
+
 	//camera.setType(0); //THIRD
 
 	//velocity += acceleration;
@@ -1449,7 +1492,7 @@ void Game::updatePlay(int model_number)
 		velocity[0] = -maxVelocity;
 	}
 
-	std::cout << "AUX: " << aux << std::endl;
+	//std::cout << "AUX: " << aux << std::endl;
 
 	/*if (velocidadRotacion >= velocidadRotacionMaxima) {
 		velocidadRotacion = velocidadRotacionMaxima;
@@ -1575,35 +1618,34 @@ void Game::updateView(int carStates_number, int car_number)
 			velocidadRotacion[carStates_number] = 0.f;
 		}
 		frame[carStates_number]++;
-	}
 
-	//std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", "
+		//std::cout << "Coordenadas: (" << models[1]->getMeshes()[0]->getPosition().x << ", "
 		//<< models[1]->getMeshes()[0]->getPosition().y << ", " << models[1]->getMeshes()[0]->getPosition().z << ")" << std::endl;
 
-	if (velocity[carStates_number] >= maxVelocity / 2) {
-		velocity[carStates_number] = maxVelocity / 2;
-	}
-	else if (velocity[carStates_number] <= -maxVelocity) {
-		velocity[carStates_number] = -maxVelocity;
-	}
+		if (velocity[carStates_number] >= maxVelocity / 2) {
+			velocity[carStates_number] = maxVelocity / 2;
+		}
+		else if (velocity[carStates_number] <= -maxVelocity) {
+			velocity[carStates_number] = -maxVelocity;
+		}
 
-	/*if (velocidadRotacion >= velocidadRotacionMaxima) {
-		velocidadRotacion = velocidadRotacionMaxima;
+		/*if (velocidadRotacion >= velocidadRotacionMaxima) {
+			velocidadRotacion = velocidadRotacionMaxima;
+		}
+		else if (velocidadRotacion <= -velocidadRotacionMaxima) {
+			velocidadRotacion = -velocidadRotacionMaxima;
+		}*/
+
+		// Aplica la rotación
+		if (velocidadRotacion[carStates_number] != 0.f) {
+			float velocityAbs = std::abs(velocity[carStates_number]) / 0.04f;
+			models[car_number]->getMeshes()[0]->rotate(velocidadRotacion[carStates_number] * std::min(velocityAbs, 1.0f) * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
+		}
+
+		glm::vec3 forwardDirection = glm::rotate(models[car_number]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
+		glm::vec3 movement = forwardDirection * (float(velocity[carStates_number]));
+		models[car_number]->getMeshes()[0]->move(movement * 250.f * dt); // * dt
 	}
-	else if (velocidadRotacion <= -velocidadRotacionMaxima) {
-		velocidadRotacion = -velocidadRotacionMaxima;
-	}*/
-
-	// Aplica la rotación
-	if (velocidadRotacion[carStates_number] != 0.f) {
-		float velocityAbs = std::abs(velocity[carStates_number]) / 0.04f;
-		models[car_number]->getMeshes()[0]->rotate(velocidadRotacion[carStates_number] * std::min(velocityAbs, 1.0f) * 200.f * dt, glm::vec3(0, 1, 0)); // * dt
-	}
-
-	glm::vec3 forwardDirection = glm::rotate(models[car_number]->getMeshes()[0]->getRotation(), glm::vec3(0, 0, -1));
-	glm::vec3 movement = forwardDirection * (float(velocity[carStates_number]));
-	models[car_number]->getMeshes()[0]->move(movement * 250.f * dt); // * dt
-
 }
 
 void Game::saveGameStates() {
@@ -1649,6 +1691,30 @@ void Game::loadGameStates(std::string filename) {
 			std::vector<GameState> a;
 			ia >> a;
 			carStates.push_back(a);
+			inFile.close();
+			std::cout << "Game states loaded successfully. Size: " << a.size() << std::endl;
+		}
+		catch (const boost::archive::archive_exception& e) {
+			std::cerr << "Exception during deserialization: " << e.what() << std::endl;
+		}
+		catch (const std::exception& ex) {
+			std::cerr << "Exception: " << ex.what() << std::endl;
+		}
+	}
+	else {
+		std::cerr << "Unable to open file!" << std::endl;
+	}
+}
+
+void Game::loadGameStates(std::string filename, int vectorPos) {
+	std::ifstream inFile(filename);
+
+	if (inFile.is_open()) {
+		try {
+			boost::archive::text_iarchive ia(inFile);
+			std::vector<GameState> a;
+			ia >> a;
+			carStates[vectorPos] = a;
 			inFile.close();
 			std::cout << "Game states loaded successfully. Size: " << a.size() << std::endl;
 		}
@@ -1889,22 +1955,6 @@ void Game::cameraAutomatic()
 
 	//std::vector<int> checks = { 0,2,3,4,6,8,9,11,12,13,16,18 };
 
-	Checkpoint* actCheck = checkpoints[aux];
-	if (actCheck->passed(models[1]->getMeshes()[0]->getPosition())) {
-		aux++;
-		checkpointsPassed++;
-		if (aux == 20)
-			aux %= 20;
-		if (checkpointsPassed % 20 == 0)
-			lap++;
-	}
-
-	if (lap == 4) {
-		saveGameStates();
-		gameStates.clear();
-		reset();
-	}
-
 	switch (aux)
 	{
 	case 0:
@@ -1982,7 +2032,7 @@ void Game::updateViewCams()
 		reset();
 	}
 
-	std::cout << "AUX: " << aux << std::endl;
+	//std::cout << "AUX: " << aux << std::endl;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraFront;
 
@@ -2001,6 +2051,23 @@ void Game::updateViewCams()
 	else {
 		specialCams(typeCam);
 	}
+
+	Checkpoint* actCheck = checkpoints[aux];
+	if (actCheck->passed(models[1]->getMeshes()[0]->getPosition())) {
+		aux++;
+		checkpointsPassed++;
+		if (aux == 20)
+			aux %= 20;
+		if (checkpointsPassed % 20 == 0)
+			lap++;
+	}
+
+	if (lap == 4) {
+		saveGameStates();
+		gameStates.clear();
+		reset();
+	}
+
 }
 
 void Game::renderView()
@@ -2030,6 +2097,25 @@ void Game::renderView()
 	glUseProgram(0);
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Game::initReplaysList() {
+	replayNames.clear();
+	const std::string folderPath = "replays"; // Replace with your folder path
+
+	boost::filesystem::path directory(folderPath);
+	if (boost::filesystem::exists(directory) && boost::filesystem::is_directory(directory)) {
+		boost::filesystem::directory_iterator end_iter;
+		for (boost::filesystem::directory_iterator dir_iter(directory); dir_iter != end_iter; ++dir_iter) {
+			if (boost::filesystem::is_regular_file(dir_iter->status())) {
+				replayNames.emplace_back(dir_iter->path().filename().string());
+			}
+		}
+	}
+	else {
+		std::cerr << "Error opening directory\n";
+		return;
+	}
 }
 
 void Game::reset() {
@@ -2079,10 +2165,15 @@ void Game::reset() {
 	startTime2Status = false;
 	flag1 = false;
 	flag2 = false;
+	flag3 = false;
+
+	minutesPartida = 0;
 
 	checkpointsPassed = 0;
 	aux = 0;
 	lap = 1;
+
+	selectedReplayIndex = -1;
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }

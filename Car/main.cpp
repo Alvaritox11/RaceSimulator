@@ -119,7 +119,7 @@ std::string getCurrentDateTime() {
     localtime_s(&timeInfo, &currentTime);
 
     // Format the time into a string
-    std::strftime(buffer, bufferSize, "gamestates_%Y_%m_%d_%H%M%S.txt", &timeInfo);
+    std::strftime(buffer, bufferSize, "replays/gamestates_%Y_%m_%d_%H%M%S.txt", &timeInfo);
 
     return std::string(buffer);
 }
@@ -161,6 +161,10 @@ int main(void)
         lastTime = nowTime;
 
         if (game.getStartGame() == 4) {
+            if (!game.flag3) {
+                game.initReplaysList();
+                game.flag3 = true;
+            }
             game.replaySelector();
         }
 

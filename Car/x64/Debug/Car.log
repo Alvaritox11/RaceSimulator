@@ -1,22 +1,47 @@
-﻿  Game.cpp
+﻿  Checkpoint.h
 E:\UNI\RaceSimulator\Car\Primitives.h(38,70): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
 E:\UNI\RaceSimulator\Car\Primitives.h(39,68): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
 E:\UNI\RaceSimulator\Car\Model.h(66,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
 E:\UNI\RaceSimulator\Car\Model.h(91,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\filesystem(13): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+  Game.cpp
+E:\UNI\RaceSimulator\Car\Primitives.h(38,70): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Primitives.h(39,68): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Model.h(66,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Model.h(91,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\filesystem(13): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
 E:\UNI\RaceSimulator\Car\Game.h(39,31): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
-E:\UNI\RaceSimulator\Car\Game.cpp(655,65): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(655,43): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(668,35): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(731,65): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(731,43): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(739,17): warning C4305: '=': truncamiento de 'double' a 'float'
-E:\UNI\RaceSimulator\Car\Game.cpp(767,26): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(817,17): warning C4305: '=': truncamiento de 'double' a 'float'
-E:\UNI\RaceSimulator\Car\Game.cpp(1475,21): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(1599,21): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
-E:\UNI\RaceSimulator\Car\Game.cpp(1702,12): warning C4101: 'cameraPos': variable local sin referencia
-E:\UNI\RaceSimulator\Car\Game.cpp(1987,12): warning C4101: 'cameraFront': variable local sin referencia
-E:\UNI\RaceSimulator\Car\Game.cpp(1986,12): warning C4101: 'cameraPos': variable local sin referencia
+E:\UNI\RaceSimulator\Car\Game.cpp(685,65): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(685,43): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(698,35): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(765,65): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(765,43): warning C4244: 'argumento': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(773,17): warning C4305: '=': truncamiento de 'double' a 'float'
+E:\UNI\RaceSimulator\Car\Game.cpp(801,26): warning C4267: '=': conversión de 'size_t' a 'int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(851,17): warning C4305: '=': truncamiento de 'double' a 'float'
+E:\UNI\RaceSimulator\Car\Game.cpp(1518,21): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(1641,22): warning C4244: 'inicializando': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Game.cpp(1768,12): warning C4101: 'cameraPos': variable local sin referencia
+E:\UNI\RaceSimulator\Car\Game.cpp(2037,12): warning C4101: 'cameraFront': variable local sin referencia
+E:\UNI\RaceSimulator\Car\Game.cpp(2036,12): warning C4101: 'cameraPos': variable local sin referencia
+  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_impl_glfw.cpp
+  imgui_impl_opengl3.cpp
+  imgui_tables.cpp
+  imgui_widgets.cpp
+  main.cpp
+E:\UNI\RaceSimulator\Car\Primitives.h(38,70): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Primitives.h(39,68): warning C4267: 'return': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Model.h(66,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\Model.h(91,57): warning C4267: 'argumento': conversión de 'size_t' a 'const unsigned int'; posible pérdida de datos
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.37.32822\include\filesystem(13): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+E:\UNI\RaceSimulator\Car\Game.h(39,31): warning C4305: 'inicializando': truncamiento de 'double' a 'float'
+E:\UNI\RaceSimulator\Car\main.cpp(179,44): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UNI\RaceSimulator\Car\main.cpp(222,48): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+  Generando código...
+     Creando biblioteca E:\UNI\RaceSimulator\x64\Debug\Car.lib y objeto E:\UNI\RaceSimulator\x64\Debug\Car.exp
   Car.vcxproj -> E:\UNI\RaceSimulator\x64\Debug\Car.exe
   "pwsh.exe" no se reconoce como un comando interno o externo,
   programa o archivo por lotes ejecutable.

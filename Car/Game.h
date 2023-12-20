@@ -106,9 +106,7 @@ private:
 	// HAY QUE INICIALIZARLOS DE ALGUNA FORMA Y PONER EL PRIMERO EN DEFAULT SIEMPRE
 	//Replays
 	int selectedReplayIndex = -1;
-	std::vector<std::string> replayNames = { "Hola" , "David", "Aqui", "Los", "Replays", "Xd",
-											"aedds", "sdaa", "sda", "dsada", "asdasd", "adsada",
-											"sdad", "asdadas", "asdadas"};
+	std::vector<std::string> replayNames = {};
 	
 	
 	//Private functions
@@ -147,6 +145,7 @@ public:
 	std::chrono::steady_clock::time_point startTime2;
 	bool startTime2Status = false;
 	bool flag1 = false,	flag2 = false;
+	int minutesPartida = 0;
 
 	// Files
 	std::string saveFile = "default.txt";
@@ -161,6 +160,9 @@ public:
 	float lastTime;
 
 	virtual ~Game();
+
+	//Replays Menu
+	bool flag3 = false;
 
 	//Accessors
 	int getWindowShouldClose();
@@ -198,6 +200,7 @@ public:
 	//ViewMode
 	void menuCams();
 	void loadGameStates(std::string filename);
+	void loadGameStates(std::string filename, int vectorPos);
 	void updateViewCams();
 	void updateView(int carStates_number, int car_number);
 	void renderView();
@@ -206,6 +209,9 @@ public:
 	void camerasCircuit(int typeCam);
 	void specialCams(int typeCam);
 	void cameraAutomatic();
+
+	//Replay Menu
+	void initReplaysList();
 
 	//Static functions
 	static void framebuffer_resize_callback(GLFWwindow* window, int fbW, int fbH);
